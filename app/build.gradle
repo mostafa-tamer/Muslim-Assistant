@@ -69,10 +69,13 @@ dependencies {
     //worker
     implementation 'androidx.work:work-runtime-ktx:2.7.1'
 
-    // Koin main features for Android
+    //Koin main features for Android
     implementation "io.insert-koin:koin-android:3.2.3"
     implementation "io.insert-koin:koin-android-compat:3.2.3"
     implementation "io.insert-koin:koin-androidx-workmanager:3.2.3"
     implementation "io.insert-koin:koin-androidx-navigation:3.2.3"
+
+    //navigation drawer
+    implementation "androidx.drawerlayout:drawerlayout:1.1.1"
 
 }

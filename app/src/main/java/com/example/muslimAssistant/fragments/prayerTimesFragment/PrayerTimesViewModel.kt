@@ -1,4 +1,4 @@
-package com.example.muslimAssistant.prayerTimesFragment
+package com.example.muslimAssistant.fragments.prayerTimesFragment
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

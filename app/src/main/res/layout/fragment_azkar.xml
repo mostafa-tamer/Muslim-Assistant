@@ -15,6 +15,5 @@
         android:textColor="@color/black"
         android:textIsSelectable="true"
         android:textSize="24dp"
-
         android:textStyle="bold" />
 </ScrollView>

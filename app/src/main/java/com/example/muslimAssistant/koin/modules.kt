@@ -5,7 +5,7 @@ import androidx.room.Room
 import com.example.muslimAssistant.database.PrayerTimesDatabase
 import com.example.muslimAssistant.network.ApiService
 import com.example.muslimAssistant.notifications.AlarmGenerator
-import com.example.muslimAssistant.prayerTimesFragment.PrayerTimesViewModel
+import com.example.muslimAssistant.fragments.prayerTimesFragment.PrayerTimesViewModel
 import com.example.muslimAssistant.repositories.PrayerTimesRepository
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.squareup.moshi.Moshi

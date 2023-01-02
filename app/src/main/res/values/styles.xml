@@ -11,4 +11,12 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="tab_layout_style">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="nav_drawer_style">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

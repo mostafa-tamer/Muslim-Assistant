@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment2">
+
+    <fragment
+        android:id="@+id/prayerTimesFragment"
+        android:name="com.example.muslimAssistant.fragments.prayerTimesFragment.PrayerTimesFragment"
+        android:label="PrayerTimesFragment" />
+    <fragment
+        android:id="@+id/azkarFragment"
+        android:name="com.example.muslimAssistant.fragments.azkarFragment.AzkarFragment"
+        android:label="AzkarFragment" />
+    <fragment
+        android:id="@+id/mainFragment2"
+        android:name="com.example.muslimAssistant.fragments.mainFragment.MainFragment"
+        android:label="Muslim Assistant"
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment2_to_prayerTimesFragment"
+            app:destination="@id/prayerTimesFragment" />
+        <action
+            android:id="@+id/action_mainFragment2_to_azkarFragment"
+            app:destination="@id/azkarFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.muslimAssistant.fragments.aboutFragment.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.muslimAssistant.fragments.settingsFragment.SettingFragment"
+        android:label="Setting Fragment"
+        tools:layout="@layout/fragment_settings" />
+</navigation>

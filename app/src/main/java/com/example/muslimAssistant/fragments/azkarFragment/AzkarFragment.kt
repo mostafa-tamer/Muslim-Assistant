@@ -1,4 +1,4 @@
-package com.example.muslimAssistant.azkarFragment
+package com.example.muslimAssistant.fragments.azkarFragment
 
 import android.os.Bundle
 import android.view.*

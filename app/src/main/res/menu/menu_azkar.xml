@@ -4,9 +4,9 @@
     <item
         android:id="@+id/sabah"
         android:title="أذكار الصباح"
-        app:showAsAction="ifRoom" />
+         />
     <item
         android:id="@+id/masaa"
         android:title="أذكار المساء"
-        app:showAsAction="ifRoom" />
+        />
 </menu>

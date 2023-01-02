@@ -1,4 +1,4 @@
-package com.example.muslimAssistant.prayerTimesFragment
+package com.example.muslimAssistant.fragments.prayerTimesFragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
