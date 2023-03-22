@@ -6,8 +6,9 @@ import android.content.Intent
 import com.example.muslimsAssistant.ChannelIDs
 import com.example.muslimsAssistant.NotificationCodes
 import com.example.muslimsAssistant.notifications.NotificationHelper
+import java.lang.Thread.sleep
 
-class PrayerTimesReceiver: BroadcastReceiver() {
+class PrayerTimesReceiver : BroadcastReceiver() {
 
     private lateinit var value: String
     private lateinit var context: Context
@@ -16,7 +17,7 @@ class PrayerTimesReceiver: BroadcastReceiver() {
 
         this.context = context
 
-        value = intnet.getStringExtra("value")!!
+        value = intnet.getStringExtra("value").toString()
 
         prayersNotification()
         azkarNotification()
@@ -24,6 +25,7 @@ class PrayerTimesReceiver: BroadcastReceiver() {
     }
 
     private fun azkarNotification() {
+        sleep(5000)
         when (value) {
             "الفجر" -> {
                 NotificationHelper(
@@ -46,8 +48,7 @@ class PrayerTimesReceiver: BroadcastReceiver() {
         }
     }
 
-    private fun prayersNotification() {
-
+    private fun prayersNotification() { 
         NotificationHelper(
             context,
             ChannelIDs.PRIORITY_MAX.ID,

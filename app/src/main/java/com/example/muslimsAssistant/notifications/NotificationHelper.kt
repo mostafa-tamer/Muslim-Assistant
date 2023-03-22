@@ -51,16 +51,10 @@ class NotificationHelper(
             .setSmallIcon(R.drawable.pray)
             .setContentIntent(setupClickToBackToApplicationIntent())
             .setAutoCancel(true)
-//            .addAction(
-//                R.drawable.pray,
-//                "Clear Notifications",
-//                setupActionIntent()
-//            )
             .build()
     }
 
     fun startNotification() {
-
         val notificationManagerCompat = NotificationManagerCompat.from(context)
         notificationManagerCompat.notify(notificationID, notificationCreator())
     }
