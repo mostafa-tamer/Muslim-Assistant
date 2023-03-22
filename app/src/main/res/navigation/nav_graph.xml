@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+
+    <fragment
+        android:id="@+id/prayerTimesFragment"
+        android:name="com.example.muslimsAssistant.fragments.prayerTimesFragment.PrayerTimesFragment"
+        android:label="PrayerTimesFragment" />
+    <fragment
+        android:id="@+id/azkarFragment"
+        android:name="com.example.muslimsAssistant.fragments.azkarFragment.AzkarFragment"
+        android:label="AzkarFragment" />
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.muslimsAssistant.fragments.mainFragment.MainFragment"
+        android:label="Muslim Assistant"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/action_mainFragment2_to_prayerTimesFragment"
+            app:destination="@id/prayerTimesFragment" />
+        <action
+            android:id="@+id/action_mainFragment2_to_azkarFragment"
+            app:destination="@id/azkarFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_tasbeehFragment"
+            app:destination="@id/tasbeehFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_reminderFragment"
+            app:destination="@id/reminderFragment" />
+
+    </fragment>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.example.muslimsAssistant.fragments.aboutFragment.AboutFragment"
+        android:label="About"
+        tools:layout="@layout/fragment_about" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.example.muslimsAssistant.fragments.settingsFragment.SettingsFragment"
+        android:label="Setting Fragment"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/tasbeehFragment"
+        android:name="com.example.muslimsAssistant.fragments.tasbeehFragment.TasbeehFragment"
+        android:label="fragment_tasbeeh"
+        tools:layout="@layout/fragment_tasbeeh" />
+    <fragment
+        android:id="@+id/reminderFragment"
+        android:name="com.example.muslimsAssistant.fragments.reminderFragment.ReminderFragment"
+        android:label="fragment_reminder"
+        tools:layout="@layout/fragment_reminder" />
+
+</navigation>

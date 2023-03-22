@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="homeViewModel"
+            type="com.example.muslimsAssistant.fragments.prayerTimesFragment.PrayerTimesViewModel" />
+    </data>
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/antique_white"
+            android:fillViewport="true">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/target"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:context=".fragments.prayerTimesFragment.PrayerTimesFragment">
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="@style/progress_bar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/date"
+                    text="@{homeViewModel.date}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="dd/mm/yyyy"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/transparent"
+                    android:textSize="45dp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/fajr"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+                <TextView
+                    android:id="@+id/fajr"
+                    style="@style/prayer_times"
+                    android:hint="fajr"
+                    android:textColorHint="@color/transparent"
+
+                    app:layout_constraintBottom_toTopOf="@+id/sunrise"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/date"
+                    tools:prayers="@{homeViewModel.fajr}" />
+
+                <TextView
+                    android:id="@+id/sunrise"
+                    style="@style/prayer_times"
+                    android:hint="sunrise"
+                    android:textColorHint="@color/transparent"
+
+                    app:layout_constraintBottom_toTopOf="@+id/duhr"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fajr"
+                    tools:prayers="@{homeViewModel.sunrise}" />
+
+                <TextView
+                    android:id="@+id/duhr"
+                    style="@style/prayer_times"
+                    android:hint="duhr"
+                    android:textColorHint="@color/transparent"
+
+                    app:layout_constraintBottom_toTopOf="@+id/asr"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/sunrise"
+                    tools:prayers="@{homeViewModel.dhuhr}" />
+
+                <TextView
+                    android:id="@+id/asr"
+                    style="@style/prayer_times"
+                    android:hint="asr"
+                    android:text="Loading..."
+                    android:textColorHint="@color/transparent"
+                    app:layout_constraintBottom_toTopOf="@+id/magrib"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/duhr"
+                    tools:prayers="@{homeViewModel.asr}" />
+
+                <TextView
+                    android:id="@+id/magrib"
+                    style="@style/prayer_times"
+                    android:hint="magrib"
+                    android:textColorHint="@color/transparent"
+
+                    app:layout_constraintBottom_toTopOf="@+id/isha"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/asr"
+                    tools:prayers="@{homeViewModel.maghrib}" />
+
+                <TextView
+                    android:id="@+id/isha"
+                    style="@style/prayer_times"
+                    android:hint="isha"
+                    android:textColorHint="@color/transparent"
+
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/magrib"
+                    tools:prayers="@{homeViewModel.isha}" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </FrameLayout>
+
+</layout>

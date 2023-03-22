@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        app:constraintSetEnd="@+id/endDown"
+        app:constraintSetStart="@+id/start">
+
+        <!-- MotionLayout will handle clicks on @id/star to "toggle" the animation between the start and end -->
+        <OnSwipe
+            app:dragDirection="dragDown"
+            app:onTouchUp="neverCompleteToEnd"
+            app:targetId="@id/target" />
+    </Transition>
+    <Transition
+        app:constraintSetEnd="@+id/endUp"
+        app:constraintSetStart="@+id/start">
+        <!-- MotionLayout will handle clicks on @id/star to "toggle" the animation between the start and end -->
+        <OnSwipe
+            app:dragDirection="dragUp"
+            app:onTouchUp="neverCompleteToEnd"
+            app:targetId="@id/target" />
+    </Transition>
+
+
+    <!-- Constraints to apply at the start of the animation -->
+    <ConstraintSet android:id="@+id/start">
+
+        <Constraint
+            android:id="@+id/target"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </ConstraintSet>
+
+    <!-- Constraints to apply at the end of the animation -->
+    <ConstraintSet android:id="@+id/endDown">
+        <Constraint
+            android:id="@+id/target"
+            android:layout_width="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHeight_percent="0.9" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/endUp">
+        <Constraint
+            android:id="@+id/target"
+            android:layout_width="match_parent"
+            app:layout_constraintHeight_percent="0.9"
+            app:layout_constraintTop_toTopOf="parent" />
+    </ConstraintSet>
+
+</MotionScene>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="prayer_times">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textColor">@color/blue</item>
+        <item name="android:textSize">35dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="tab_layout_style">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="nav_drawer_style">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="progress_bar">
+        <item name="android:visibility">gone</item>
+        <item name="android:layout_width">30dp</item>
+        <item name="android:layout_height">30dp</item>
+        <item name="android:layout_gravity">end|top</item>
+        <item name="android:layout_margin">10dp</item>
+    </style>
+
+    <style name="ColorPrimaryWhite" parent="@style/Theme.MaterialComponents">
+
+    </style>
+
+    <style name="ripple_style">
+        <item name="mrl_rippleAlpha">0.2</item>
+        <item name="mrl_rippleOverlay">true</item>
+        <item name="mrl_rippleDuration">150</item>
+        <item name="animationMode">slide</item>
+        <item name="mrl_rippleColor">@color/gray</item>
+    </style>
+
+
+</resources>
