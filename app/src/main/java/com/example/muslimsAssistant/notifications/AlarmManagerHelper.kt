@@ -4,10 +4,8 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import com.example.muslimsAssistant.PrayerTimesPendingIntentCodes
 import com.example.muslimsAssistant.Timing
-import com.example.muslimsAssistant.Timing.addOneDayToDateTime
 import com.example.muslimsAssistant.Timing.getTodayDate
 import com.example.muslimsAssistant.database.PrayerTimes
 import com.example.muslimsAssistant.database.ReminderItemsDao
@@ -56,15 +54,17 @@ class AlarmManagerHelper(
         receiver: Class<T>
     ) {
         val dateTimeInMillis = Timing.convertDateTimeNoSecToMillisNoSec(dateTime)
-        if (dateTimeInMillis > System.currentTimeMillis()) {
-            println("$dateTime $value $requestCode")
-            generateAlarm(context, dateTimeInMillis, value, requestCode, receiver)
-        } else {
-            val dateTimePlus24 = addOneDayToDateTime(dateTime)
-            println("$dateTimePlus24 $value $requestCode")
-            val plus24DateTimeMillis =
-                Timing.convertDateTimeNoSecToMillisNoSec(dateTimePlus24)
-            generateAlarm(context, plus24DateTimeMillis, value, requestCode, receiver)
+        if (dateTime != "01-01-1970 00:00:00") {
+            if (dateTimeInMillis > System.currentTimeMillis()) {
+                println("$dateTime $value $requestCode")
+                generateAlarm(context, dateTimeInMillis, value, requestCode, receiver)
+            } else {
+                val dateTimePlus24 = Timing.addOneDayToDateTime(dateTime)
+                println("$dateTimePlus24 $value $requestCode")
+                val plus24DateTimeMillis =
+                    Timing.convertDateTimeNoSecToMillisNoSec(dateTimePlus24)
+                generateAlarm(context, plus24DateTimeMillis, value, requestCode, receiver)
+            }
         }
     }
 
