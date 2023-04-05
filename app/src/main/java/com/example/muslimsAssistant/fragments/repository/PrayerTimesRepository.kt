@@ -37,7 +37,9 @@ class PrayerTimesRepository(
 
             prayerTimesDataSource.insertPrayerTimes(listOfPrayerTimes.map {
                 PrayerTimes(
-                    date = it.date.gregorian.date,
+                    dateGregorian = it.date.gregorian.date,
+                    dateHigri = it.date.hijri.date,
+                    monthHijri = it.date.hijri.month.ar,
                     fajr = it.timings.Fajr,
                     sunrise = it.timings.Sunrise,
                     dhuhr = it.timings.Dhuhr,

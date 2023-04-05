@@ -11,14 +11,20 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.muslimsAssistant.PermissionsCodes
+import com.example.muslimsAssistant.Timing.convertDateTimeNoSecToMillisNoSec
+import com.example.muslimsAssistant.Timing.convertMillisToHMS
+import com.example.muslimsAssistant.Timing.convertTo12HourFormat
 import com.example.muslimsAssistant.Timing.getTodayDate
+import com.example.muslimsAssistant.Timing.getTomorrowDate
 import com.example.muslimsAssistant.database.PrayerTimes
 import com.example.muslimsAssistant.databinding.FragmentPrayerTimesBinding
 import com.example.muslimsAssistant.notifications.AlarmManagerHelper
 import com.example.muslimsAssistant.utils.CustomAlertDialog
 import com.example.muslimsAssistant.utils.toastErrorMessageObserver
 import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.runBlocking
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.*
 
 class PrayerTimesFragment : Fragment() {
 
@@ -37,7 +43,7 @@ class PrayerTimesFragment : Fragment() {
 
         exceptionErrorMessageAlertDialog = CustomAlertDialog(requireContext())
 
-        databaseObserver()
+//        prayerTimesDatabaseLoader()
         isLoadingDataBusyObserver()
 
         toastErrorMessageObserver(
@@ -55,19 +61,19 @@ class PrayerTimesFragment : Fragment() {
         viewModel.isLoadingPrayerTimes.observe(viewLifecycleOwner) {
             if (it == false) {
                 binding.progressBar.visibility = View.INVISIBLE
+                prayerTimesDatabaseLoader()
             } else {
                 binding.progressBar.visibility = View.VISIBLE
             }
         }
     }
 
-    private fun databaseObserver() {
-        viewModel.retPrayerTimesLiveData().observe(viewLifecycleOwner) {
-            if (it != null) {
-                updateViewModelPrayerTimes(it)
-                val alarmManagerHelper = AlarmManagerHelper(requireContext())
-                alarmManagerHelper.setPrayerTimes()
-            }
+    private fun prayerTimesDatabaseLoader() {
+        runBlocking {
+            val prayerTimes = viewModel.retPrayerTimesSuspend()
+            updateViewModelPrayerTimes(prayerTimes)
+            val alarmManagerHelper = AlarmManagerHelper(requireContext())
+            alarmManagerHelper.setPrayerTimes()
         }
     }
 
@@ -121,17 +127,84 @@ class PrayerTimesFragment : Fragment() {
         }
     }
 
-    private fun updateViewModelPrayerTimes(prayerTimesList: List<PrayerTimes>) {
-        val searchIndex = prayerTimesList.binarySearch { it.date.compareTo(getTodayDate()) }
+    fun getPrayerTimesSelectedData(prayerTimesList: List<PrayerTimes>, date: String): PrayerTimes? {
+        val searchIndex =
+            prayerTimesList.binarySearch { it.dateGregorian.compareTo(date) }
         if (searchIndex >= 0) {
-            val prayerTime = prayerTimesList[searchIndex]
-            viewModel.date.value = prayerTime.date
-            viewModel.fajr.value = prayerTime.fajr
-            viewModel.sunrise.value = prayerTime.sunrise
-            viewModel.dhuhr.value = prayerTime.dhuhr
-            viewModel.asr.value = prayerTime.asr
-            viewModel.maghrib.value = prayerTime.maghrib
-            viewModel.isha.value = prayerTime.isha
+            return prayerTimesList[searchIndex]
+        }
+        return null
+    }
+
+    private fun updateViewModelPrayerTimes(prayerTimesList: List<PrayerTimes>) {
+        val prayerTimes = getPrayerTimesSelectedData(prayerTimesList, getTodayDate())
+        if (prayerTimes != null) {
+            viewModel.dateHijri.value =  prayerTimes.dateHigri
+            viewModel.monthHijri.value =  prayerTimes.monthHijri
+            viewModel.fajr.value = convertTo12HourFormat(prayerTimes.fajr)
+            viewModel.sunrise.value = convertTo12HourFormat(prayerTimes.sunrise)
+            viewModel.dhuhr.value = convertTo12HourFormat(prayerTimes.dhuhr)
+            viewModel.asr.value = convertTo12HourFormat(prayerTimes.asr)
+            viewModel.maghrib.value = convertTo12HourFormat(prayerTimes.maghrib)
+            viewModel.isha.value = convertTo12HourFormat(prayerTimes.isha)
+
+            Timer().schedule(
+                object : TimerTask() {
+                    override fun run() {
+                        setRemainingTime(prayerTimesList)
+                    }
+                }, 0, 1000
+            )
+        }
+    }
+
+    private fun setRemainingTime(prayerTimesList: List<PrayerTimes>) {
+        val todayPrayerTimes = getPrayerTimesSelectedData(prayerTimesList, getTodayDate())
+        var foundToday = false
+        if (todayPrayerTimes != null) {
+            val prayerTimesStrings = mapOf(
+                todayPrayerTimes.fajr to "الفجر",
+                todayPrayerTimes.dhuhr to "الظهر",
+                todayPrayerTimes.asr to "العصر",
+                todayPrayerTimes.maghrib to "المغرب",
+                todayPrayerTimes.isha to "العشاء",
+            )
+            for (i in prayerTimesStrings) {
+
+                val prayerTimeMillis =
+                    convertDateTimeNoSecToMillisNoSec("${getTodayDate()} ${i.key}")
+
+                val currentTimeMillis = System.currentTimeMillis()
+
+                if (currentTimeMillis < prayerTimeMillis) {
+
+                    binding.remaining.text = "الوقت المتبقي على صلاة ${i.value}"
+
+                    val remainingTimeInMillis = prayerTimeMillis - currentTimeMillis
+                    val remainingTimeString = convertMillisToHMS(remainingTimeInMillis)
+                    binding.remainingTime.text = remainingTimeString
+                    foundToday = true
+                    break
+                }
+            }
+        }
+
+        if (foundToday) return
+
+        binding.remaining.text = "الوقت المتبقي على صلاة الفجر"
+
+        val tomorrowPrayerTimes = getPrayerTimesSelectedData(prayerTimesList, getTomorrowDate())
+
+        if (tomorrowPrayerTimes != null) {
+            val tomorrowFajrTimeMillis =
+                convertDateTimeNoSecToMillisNoSec("${getTomorrowDate()} ${tomorrowPrayerTimes.fajr}")
+            val currentTimeMillis = System.currentTimeMillis()
+
+            if (currentTimeMillis < tomorrowFajrTimeMillis) {
+                val remainingTimeInMillis = tomorrowFajrTimeMillis - currentTimeMillis
+                val remainingTimeString = convertMillisToHMS(remainingTimeInMillis)
+                binding.remainingTime.text = remainingTimeString
+            }
         }
     }
 }

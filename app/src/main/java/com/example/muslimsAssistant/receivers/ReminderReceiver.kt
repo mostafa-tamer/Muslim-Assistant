@@ -3,8 +3,9 @@ package com.example.muslimsAssistant.receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
 import com.example.muslimsAssistant.ChannelIDs
-import com.example.muslimsAssistant.NotificationCodes
+import com.example.muslimsAssistant.R
 import com.example.muslimsAssistant.notifications.NotificationHelper
 
 class ReminderReceiver : BroadcastReceiver() {
@@ -16,5 +17,6 @@ class ReminderReceiver : BroadcastReceiver() {
             "تذكير",
             intent.getStringExtra("value").toString()
         ).startNotification()
+
     }
 }

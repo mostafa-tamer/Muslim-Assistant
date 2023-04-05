@@ -16,7 +16,8 @@ class PrayerTimesViewModel(
     val errorMessageLiveData = MutableLiveData(ErrorMessage())
 
     val isLoadingPrayerTimes = MutableLiveData(false)
-    val date = MutableLiveData<String>()
+    val dateHijri = MutableLiveData<String>()
+    val monthHijri = MutableLiveData<String>()
     val fajr = MutableLiveData<String>()
     val sunrise = MutableLiveData<String>()
     val dhuhr = MutableLiveData<String>()

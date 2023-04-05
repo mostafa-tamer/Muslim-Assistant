@@ -3,8 +3,10 @@ package com.example.muslimsAssistant.receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.MediaPlayer
 import com.example.muslimsAssistant.ChannelIDs
 import com.example.muslimsAssistant.NotificationCodes
+import com.example.muslimsAssistant.R
 import com.example.muslimsAssistant.notifications.NotificationHelper
 import java.lang.Thread.sleep
 
@@ -25,7 +27,7 @@ class PrayerTimesReceiver : BroadcastReceiver() {
     }
 
     private fun azkarNotification() {
-        sleep(5000)
+        sleep(5000 * 60)
         when (value) {
             "الفجر" -> {
                 NotificationHelper(
@@ -48,7 +50,7 @@ class PrayerTimesReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun prayersNotification() { 
+    private fun prayersNotification() {
         NotificationHelper(
             context,
             ChannelIDs.PRIORITY_MAX.ID,
@@ -56,24 +58,6 @@ class PrayerTimesReceiver : BroadcastReceiver() {
             "حان وقت الصلاة",
             "صلاة $value الآن"
         ).startNotification()
-
-//        if (value == "الشروق") {
-//            NotificationHelper(
-//                context,
-//                ChannelIDs.PRIORITY_MAX.ID,
-//                NotificationCodes.PrayerTimes.code,
-//                "حان وقت صلاة الضحى",
-//                "صلاة الضحى الآن"
-//            ).startNotification()
-//        } else {
-//            NotificationHelper(
-//                context,
-//                ChannelIDs.PRIORITY_MAX.ID,
-//                NotificationCodes.PrayerTimes.code,
-//                "حان وقت الصلاة",
-//                "صلاة $value الآن"
-//            ).startNotification()
-//        }
+        MediaPlayer.create(context, R.raw.allahakbar).start()
     }
-
 }

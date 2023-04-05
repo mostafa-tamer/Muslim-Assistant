@@ -2,12 +2,14 @@ package com.example.muslimsAssistant
 
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 object Timing {
-
-    private val fullDateTimeFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss")
-    private val dateTimeFormatNoSecs = SimpleDateFormat("dd-MM-yyyy HH:mm")
-    private val dateFormat = SimpleDateFormat("dd-MM-yyyy")
+    private val localDefault = Locale.getDefault()
+    private val fullDateTimeFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", localDefault)
+    private val dateTimeFormatNoSecs = SimpleDateFormat("dd-MM-yyyy HH:mm", localDefault)
+    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", localDefault)
+    private val timeFormat = SimpleDateFormat("HH:mm:ss", localDefault)
 
 
     init {
@@ -52,10 +54,22 @@ object Timing {
             getYearOfCurrentMonth()
     }
 
-    fun convertDateTimeNoSecToMillisNoSec(date: String): Long = dateTimeFormatNoSecs.parse(date)!!.time
-    fun convertFullDateTimeNoSecToMillis(date: String): Long = fullDateTimeFormat.parse(date)!!.time
-    fun convertMillisToFullDateTime(millis: Long): String = fullDateTimeFormat.format(Date(millis))
+    fun convertDateTimeNoSecToMillisNoSec(date: String): Long =
+        dateTimeFormatNoSecs.parse(date)!!.time
 
+    fun convertFullDateTimeNoSecToMillis(date: String): Long = fullDateTimeFormat.parse(date)!!.time
+    fun convertMillisToHMS(milliseconds: Long): String {
+        val hours = TimeUnit.MILLISECONDS.toHours(milliseconds)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds) % 60
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    }
+    fun convertTo12HourFormat(time24: String): String {
+        val inputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("h:mm\na", Locale.getDefault())
+        val date = inputFormat.parse(time24)
+        return outputFormat.format(date)
+    }
     fun addOneDayToDate(dateString: String): String {
         val date = dateFormat.parse(dateString) ?: return dateString
         val calendar = Calendar.getInstance().apply {

@@ -1,17 +1,12 @@
 package com.example.muslimsAssistant
 
+import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.style.ForegroundColorSpan
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
 import com.example.muslimsAssistant.databinding.ActivityMainBinding
 import com.example.muslimsAssistant.notifications.ChannelHelper
 
@@ -31,6 +26,10 @@ class MainActivity : AppCompatActivity() {
 
         cancelNotifications()
         channelCreator()
+
+
+
+
 //        drawerLayoutSetup()
     }
 

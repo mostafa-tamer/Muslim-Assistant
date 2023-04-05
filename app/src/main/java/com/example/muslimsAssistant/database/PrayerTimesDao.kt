@@ -12,9 +12,9 @@ interface PrayerTimesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPrayerTimes(prayerTimeProperties: List<PrayerTimes>)
 
-    @Query("select * from PrayerTimes order by date")
+    @Query("select * from PrayerTimes order by dateGregorian")
     fun retPrayerTimesLiveData(): LiveData<List<PrayerTimes>>
 
-    @Query("select * from PrayerTimes order by date")
+    @Query("select * from PrayerTimes order by dateGregorian")
     suspend fun retPrayerTimesSuspend(): List<PrayerTimes>
 }

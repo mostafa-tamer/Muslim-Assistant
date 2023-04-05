@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -15,116 +14,209 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <ScrollView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/antique_white"
-            android:fillViewport="true">
+            android:orientation="vertical">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/target"
+            <TextView
+
+                android:id="@+id/date"
+                text="@{homeViewModel.dateHijri}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                tools:context=".fragments.prayerTimesFragment.PrayerTimesFragment">
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginRight="15dp"
+                android:hint="01/01/0001"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="45dp"
+                android:textStyle="bold" />
 
-                <ProgressBar
-                    android:id="@+id/progressBar"
-                    style="@style/progress_bar"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <TextView
 
-                <TextView
-                    android:id="@+id/date"
-                    text="@{homeViewModel.date}"
-                    android:layout_width="wrap_content"
+                android:id="@+id/month_hijri"
+                text="@{homeViewModel.monthHijri}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:hint="محرم"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textSize="35dp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.5"
+                android:gravity="bottom">
+
+                <HorizontalScrollView
+                    android:id="@+id/scroll"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="dd/mm/yyyy"
+                    android:layout_margin="15dp"
+                    android:background="@drawable/rounded_corner"
+                    android:layoutDirection="rtl">
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:stretchColumns="*">
+
+                        <TableRow>
+
+                            <TextView
+                                android:padding="5dp"
+                                android:text="الفجر"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textSize="20dp" />
+
+                            <TextView
+                                android:padding="5dp"
+                                android:text="الشروق"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textSize="20dp" />
+
+                            <TextView
+                                android:padding="5dp"
+                                android:text="الظهر"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textSize="20dp" />
+
+                            <TextView
+                                android:padding="5dp"
+                                android:text="العصر"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textSize="20dp" />
+
+                            <TextView
+                                android:padding="5dp"
+                                android:text="المغرب"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textSize="20dp" />
+
+                            <TextView
+                                android:padding="5dp"
+                                android:text="العشاء"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textSize="20dp" />
+                        </TableRow>
+
+                        <TableRow>
+
+
+                            <TextView
+                                android:id="@+id/fajr"
+                                android:hint="00:00"
+                                android:padding="5dp"
+                                android:text="@{homeViewModel.fajr}"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="20dp" />
+
+                            <TextView
+                                android:id="@+id/sunrise"
+                                android:hint="00:00"
+                                android:padding="5dp"
+                                android:text="@{homeViewModel.sunrise}"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="20dp" />
+
+                            <TextView
+                                android:id="@+id/duhr"
+                                android:hint="00:00"
+                                android:padding="5dp"
+                                android:text="@{homeViewModel.dhuhr}"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="20dp" />
+
+                            <TextView
+                                android:id="@+id/asr"
+                                android:hint="00:00"
+                                android:padding="5dp"
+                                android:text="@{homeViewModel.asr}"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="20dp" />
+
+                            <TextView
+                                android:id="@+id/magrib"
+                                android:hint="00:00"
+                                android:padding="5dp"
+                                android:text="@{homeViewModel.maghrib}"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="20dp" />
+
+                            <TextView
+                                android:id="@+id/isha"
+                                android:hint="00:00"
+                                android:padding="5dp"
+                                android:text="@{homeViewModel.isha}"
+                                android:textAlignment="center"
+                                android:textColor="@color/white"
+                                android:textColorHint="@color/white"
+                                android:textSize="20dp" />
+                        </TableRow>
+                    </TableLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/remaining"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="25dp"
+                    android:text="الوقت المتبقي على صلاة الفجر"
                     android:textAlignment="center"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/transparent"
-                    android:textSize="45dp"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@+id/fajr"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
+                    android:textColor="@color/blue"
+                    android:textSize="25dp"
+                    android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/fajr"
-                    style="@style/prayer_times"
-                    android:hint="fajr"
-                    android:textColorHint="@color/transparent"
+                    android:id="@+id/remaining_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="00:00:00"
+                    android:textAlignment="center"
+                    android:textColor="@color/blue"
+                    android:textSize="25dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
 
-                    app:layout_constraintBottom_toTopOf="@+id/sunrise"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/date"
-                    tools:prayers="@{homeViewModel.fajr}" />
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/progress_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/sunrise"
-                    style="@style/prayer_times"
-                    android:hint="sunrise"
-                    android:textColorHint="@color/transparent"
-
-                    app:layout_constraintBottom_toTopOf="@+id/duhr"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fajr"
-                    tools:prayers="@{homeViewModel.sunrise}" />
-
-                <TextView
-                    android:id="@+id/duhr"
-                    style="@style/prayer_times"
-                    android:hint="duhr"
-                    android:textColorHint="@color/transparent"
-
-                    app:layout_constraintBottom_toTopOf="@+id/asr"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/sunrise"
-                    tools:prayers="@{homeViewModel.dhuhr}" />
-
-                <TextView
-                    android:id="@+id/asr"
-                    style="@style/prayer_times"
-                    android:hint="asr"
-                    android:text="Loading..."
-                    android:textColorHint="@color/transparent"
-                    app:layout_constraintBottom_toTopOf="@+id/magrib"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/duhr"
-                    tools:prayers="@{homeViewModel.asr}" />
-
-                <TextView
-                    android:id="@+id/magrib"
-                    style="@style/prayer_times"
-                    android:hint="magrib"
-                    android:textColorHint="@color/transparent"
-
-                    app:layout_constraintBottom_toTopOf="@+id/isha"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/asr"
-                    tools:prayers="@{homeViewModel.maghrib}" />
-
-                <TextView
-                    android:id="@+id/isha"
-                    style="@style/prayer_times"
-                    android:hint="isha"
-                    android:textColorHint="@color/transparent"
-
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/magrib"
-                    tools:prayers="@{homeViewModel.isha}" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
     </FrameLayout>
 
 </layout>

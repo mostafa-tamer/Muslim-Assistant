@@ -6,7 +6,9 @@ import androidx.room.PrimaryKey
 @Entity
 data class PrayerTimes(
     @PrimaryKey
-    val date: String = "01-01-1970",
+    val dateGregorian: String = "01-01-1970",
+    val dateHigri: String = "01-01-1970",
+    val monthHijri: String = "محرم",
     val fajr: String = "00:00:00",
     val sunrise: String = "00:00:00",
     val dhuhr: String = "00:00:00",
@@ -27,7 +29,7 @@ data class UserApi(
 @Entity
 data class Tasbeeh(
     @PrimaryKey
-    val id:Int = 0,
+    val id: Int = 0,
     val tasbeehCounter: Int
 )
 

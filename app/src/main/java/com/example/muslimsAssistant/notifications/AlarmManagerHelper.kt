@@ -53,6 +53,7 @@ class AlarmManagerHelper(
         requestCode: Int,
         receiver: Class<T>
     ) {
+
         val dateTimeInMillis = Timing.convertDateTimeNoSecToMillisNoSec(dateTime)
         if (dateTime != "01-01-1970 00:00:00") {
             if (dateTimeInMillis > System.currentTimeMillis()) {
@@ -96,9 +97,7 @@ class AlarmManagerHelper(
     private suspend fun schedulePrayerTimesNotifications() {
         val todayPrayerTimes = retDayPrayerTimes(getTodayDate())
 
-        val mapOfPrayerTimes = preparePrayerTimes(
-            todayPrayerTimes
-        )
+        val mapOfPrayerTimes = preparePrayerTimes(todayPrayerTimes)
 
         for (i in mapOfPrayerTimes) {
             generateAlarmIfNotTodayThenTomorrow(
@@ -116,11 +115,13 @@ class AlarmManagerHelper(
             get<PrayerTimesRepository>(PrayerTimesRepository::class.java)
         val listOfPrayerTimes = prayerTimesRepository.retPrayerTimesSuspend()
         val searchIndex =
-            listOfPrayerTimes.binarySearch { it.date.compareTo(date) }
+            listOfPrayerTimes.binarySearch { it.dateGregorian.compareTo(date) }
         return if (searchIndex >= 0) {
             val item = listOfPrayerTimes[searchIndex]
             PrayerTimes(
-                item.date,
+                item.dateGregorian,
+                item.dateHigri,
+                item.monthHijri,
                 item.fajr,
                 item.sunrise,
                 item.dhuhr,
@@ -137,22 +138,19 @@ class AlarmManagerHelper(
         prayerTimes: PrayerTimes
     ): Map<Pair<String, String>, Int> {
         return mapOf(
-            "${prayerTimes.date} ${prayerTimes.fajr}"
+            "${prayerTimes.dateGregorian} ${prayerTimes.fajr}"
                     to "الفجر"
                     to PrayerTimesPendingIntentCodes.FAJR.code,
-//            "${prayerTimes.date} ${prayerTimes.sunrise}"
-//                    to "الشروق"
-//                    to PrayerTimesPendingIntentCodes.SUNRISE.code,
-            "${prayerTimes.date} ${prayerTimes.dhuhr}"
+            "${prayerTimes.dateGregorian} ${prayerTimes.dhuhr}"
                     to "الظهر"
                     to PrayerTimesPendingIntentCodes.DUHUR.code,
-            "${prayerTimes.date} ${prayerTimes.asr}"
+            "${prayerTimes.dateGregorian} ${prayerTimes.asr}"
                     to "العصر"
                     to PrayerTimesPendingIntentCodes.ASR.code,
-            "${prayerTimes.date} ${prayerTimes.maghrib}"
+            "${prayerTimes.dateGregorian} ${prayerTimes.maghrib}"
                     to "المغرب"
                     to PrayerTimesPendingIntentCodes.MAGRIB.code,
-            "${prayerTimes.date} ${prayerTimes.isha}"
+            "${prayerTimes.dateGregorian} ${prayerTimes.isha}"
                     to "العشاء"
                     to PrayerTimesPendingIntentCodes.ISHA.code
         )
