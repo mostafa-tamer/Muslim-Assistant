@@ -6,12 +6,13 @@ import android.content.Context
 import android.content.Intent
 import com.example.muslimsAssistant.PrayerTimesPendingIntentCodes
 import com.example.muslimsAssistant.Timing
-import com.example.muslimsAssistant.Timing.getTodayDate
+import com.example.muslimsAssistant.TodayPrayerTimesPendingIntentCodes
+import com.example.muslimsAssistant.TomorrowPrayerTimesPendingIntentCodes
 import com.example.muslimsAssistant.database.PrayerTimes
-import com.example.muslimsAssistant.database.ReminderItemsDao
-import com.example.muslimsAssistant.fragments.repository.PrayerTimesRepository
 import com.example.muslimsAssistant.receivers.PrayerTimesReceiver
 import com.example.muslimsAssistant.receivers.ReminderReceiver
+import com.example.muslimsAssistant.repository.PrayerTimesRepository
+import com.example.muslimsAssistant.repository.RemindersRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -21,8 +22,9 @@ import org.koin.java.KoinJavaComponent.get
 class AlarmManagerHelper(
     private val context: Context
 ) {
+    private val timing by lazy { Timing() }
 
-    fun setPrayerTimes() {
+    fun scheduleAlarms() {
         CoroutineScope(Dispatchers.Default).launch {
             schedulePrayerTimesNotifications()
             scheduleRemindersNotifications()
@@ -30,41 +32,32 @@ class AlarmManagerHelper(
         }
     }
 
-
     private suspend fun scheduleRemindersNotifications() {
-        val remindersDao = get<ReminderItemsDao>(ReminderItemsDao::class.java)
-        val remindersList = remindersDao.retReminderItems()
+        val remindersRepository = get<RemindersRepository>(RemindersRepository::class.java)
+        val remindersList = remindersRepository.retReminders()
 
-        for (i in remindersList) {
-            generateAlarmIfNotTodayThenTomorrow(
-                context,
-                "${getTodayDate()} ${i.hours}:${i.minutes}",
-                i.description,
-                i.id,
-                ReminderReceiver::class.java
-            )
-        }
-    }
+        remindersList.forEach { i ->
+            val dateTimeString = "${timing.getTodayDate()} ${i.hours}:${i.minutes}"
+            val dateTimeInMillis = timing.convertDmyHmToMillis(dateTimeString)
+            val dmyHmPlus24 = timing.addOneDayToDmyHm(dateTimeString)
+            val plus24DateTimeMillis = timing.convertDmyHmToMillis(dmyHmPlus24)
 
-    private fun <T> generateAlarmIfNotTodayThenTomorrow(
-        context: Context,
-        dateTime: String,
-        value: String,
-        requestCode: Int,
-        receiver: Class<T>
-    ) {
-
-        val dateTimeInMillis = Timing.convertDateTimeNoSecToMillisNoSec(dateTime)
-        if (dateTime != "01-01-1970 00:00:00") {
             if (dateTimeInMillis > System.currentTimeMillis()) {
-                println("$dateTime $value $requestCode")
-                generateAlarm(context, dateTimeInMillis, value, requestCode, receiver)
+                generateAlarm(
+                    context,
+                    dateTimeInMillis,
+                    i.description,
+                    i.id,
+                    ReminderReceiver::class.java
+                )
             } else {
-                val dateTimePlus24 = Timing.addOneDayToDateTime(dateTime)
-                println("$dateTimePlus24 $value $requestCode")
-                val plus24DateTimeMillis =
-                    Timing.convertDateTimeNoSecToMillisNoSec(dateTimePlus24)
-                generateAlarm(context, plus24DateTimeMillis, value, requestCode, receiver)
+                generateAlarm(
+                    context,
+                    plus24DateTimeMillis,
+                    i.description,
+                    i.id,
+                    ReminderReceiver::class.java
+                )
             }
         }
     }
@@ -76,6 +69,18 @@ class AlarmManagerHelper(
         requestCode: Int,
         receiver: Class<T>
     ) {
+        if (dateTimeInMillis < System.currentTimeMillis()) return
+
+        println(
+            "${timing.convertMillisToDmy(dateTimeInMillis)} ${
+                timing.convertHmTo12HrsFormat(
+                    timing.convertMillisToHm(
+                        dateTimeInMillis
+                    )
+                )
+            } $value $requestCode"
+        )
+
         val intent = Intent(context, receiver)
         intent.putExtra("value", value)
 
@@ -95,64 +100,72 @@ class AlarmManagerHelper(
     }
 
     private suspend fun schedulePrayerTimesNotifications() {
-        val todayPrayerTimes = retDayPrayerTimes(getTodayDate())
+        val prayerTimesRepository = get<PrayerTimesRepository>(PrayerTimesRepository::class.java)
 
-        val mapOfPrayerTimes = preparePrayerTimes(todayPrayerTimes)
+        val todayPrayerTimes = prayerTimesRepository.retDayPrayerTimes(timing.getTodayDate())
+        val tomorrowPrayerTimes = prayerTimesRepository.retDayPrayerTimes(timing.getTomorrowDate())
 
-        for (i in mapOfPrayerTimes) {
-            generateAlarmIfNotTodayThenTomorrow(
+        val mutableListOfTodayPrayerTimes =
+            preparePrayerTimes(todayPrayerTimes, TodayPrayerTimesPendingIntentCodes())
+        val mutableListTomorrowPrayerTimes =
+            preparePrayerTimes(tomorrowPrayerTimes, TomorrowPrayerTimesPendingIntentCodes())
+
+        mutableListOfTodayPrayerTimes.forEach { i ->
+            val prayerTimeInMillis = timing.convertDmyHmToMillis(i.time)
+            if (prayerTimeInMillis > System.currentTimeMillis()) {
+                generateAlarm(
+                    context,
+                    prayerTimeInMillis,
+                    i.name,
+                    i.requestCode,
+                    PrayerTimesReceiver::class.java
+                )
+            }
+        }
+
+        mutableListTomorrowPrayerTimes.forEach { i ->
+            val prayerTimeInMillis = timing.convertDmyHmToMillis(i.time)
+            generateAlarm(
                 context,
-                i.key.first,
-                i.key.second,
-                i.value,
+                prayerTimeInMillis,
+                i.name,
+                i.requestCode,
                 PrayerTimesReceiver::class.java
             )
         }
     }
 
-    suspend fun retDayPrayerTimes(date: String): PrayerTimes {
-        val prayerTimesRepository =
-            get<PrayerTimesRepository>(PrayerTimesRepository::class.java)
-        val listOfPrayerTimes = prayerTimesRepository.retPrayerTimesSuspend()
-        val searchIndex =
-            listOfPrayerTimes.binarySearch { it.dateGregorian.compareTo(date) }
-        return if (searchIndex >= 0) {
-            val item = listOfPrayerTimes[searchIndex]
-            PrayerTimes(
-                item.dateGregorian,
-                item.dateHigri,
-                item.monthHijri,
-                item.fajr,
-                item.sunrise,
-                item.dhuhr,
-                item.asr,
-                item.maghrib,
-                item.isha
-            )
-        } else {
-            PrayerTimes()
-        }
-    }
-
     private fun preparePrayerTimes(
-        prayerTimes: PrayerTimes
-    ): Map<Pair<String, String>, Int> {
-        return mapOf(
-            "${prayerTimes.dateGregorian} ${prayerTimes.fajr}"
-                    to "الفجر"
-                    to PrayerTimesPendingIntentCodes.FAJR.code,
-            "${prayerTimes.dateGregorian} ${prayerTimes.dhuhr}"
-                    to "الظهر"
-                    to PrayerTimesPendingIntentCodes.DUHUR.code,
-            "${prayerTimes.dateGregorian} ${prayerTimes.asr}"
-                    to "العصر"
-                    to PrayerTimesPendingIntentCodes.ASR.code,
-            "${prayerTimes.dateGregorian} ${prayerTimes.maghrib}"
-                    to "المغرب"
-                    to PrayerTimesPendingIntentCodes.MAGRIB.code,
-            "${prayerTimes.dateGregorian} ${prayerTimes.isha}"
-                    to "العشاء"
-                    to PrayerTimesPendingIntentCodes.ISHA.code
+        prayerTimes: PrayerTimes,
+        requestCode: PrayerTimesPendingIntentCodes
+    ): MutableList<ScheduledPrayerTimes> {
+        return mutableListOf(
+            ScheduledPrayerTimes(
+                "${prayerTimes.dateGregorian} ${prayerTimes.fajr}",
+                "الفجر",
+                requestCode.fajr
+            ),
+            ScheduledPrayerTimes(
+                "${prayerTimes.dateGregorian} ${prayerTimes.dhuhr}",
+                "الظهر",
+                requestCode.dhuhur
+            ),
+            ScheduledPrayerTimes(
+                "${prayerTimes.dateGregorian} ${prayerTimes.asr}",
+                "العصر",
+                requestCode.asr
+            ),
+            ScheduledPrayerTimes(
+                "${prayerTimes.dateGregorian} ${prayerTimes.maghrib}",
+                "المغرب",
+                requestCode.maghrib
+            ),
+            ScheduledPrayerTimes(
+                "${prayerTimes.dateGregorian} ${prayerTimes.isha}",
+                "العشاء",
+                requestCode.isha
+            )
         )
     }
 }
+

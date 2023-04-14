@@ -7,13 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
-import com.example.muslimsAssistant.Timing.convertDateTimeNoSecToMillisNoSec
-import com.example.muslimsAssistant.Timing.getTodayDate
+import com.example.muslimsAssistant.Timing
 import com.example.muslimsAssistant.databinding.FragmentAzkarBinding
+import com.example.muslimsAssistant.repository.PrayerTimesRepository
 import com.example.muslimsAssistant.notifications.AlarmManagerHelper
 import kotlinx.coroutines.runBlocking
+import org.koin.java.KoinJavaComponent.get
 
 class AzkarFragment : Fragment() {
+    private val timing by lazy { Timing() }
 
     private lateinit var binding: FragmentAzkarBinding
     val isDay = MutableLiveData(true)
@@ -22,9 +24,6 @@ class AzkarFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentAzkarBinding.inflate(layoutInflater)
-
-//        handleMenu()
-
 
         detectAzkar()
 
@@ -40,13 +39,16 @@ class AzkarFragment : Fragment() {
         runBlocking {
 
             val alarmHelper = AlarmManagerHelper(requireContext())
-            val prayerTimes = alarmHelper.retDayPrayerTimes(getTodayDate())
+            val prayerTimes =
+                get<PrayerTimesRepository>(PrayerTimesRepository::class.java).retDayPrayerTimes(
+                    timing.getTodayDate()
+                )
 
             val fajr = prayerTimes.fajr
             val asr = prayerTimes.asr
 
-            val fajrMillis = convertDateTimeNoSecToMillisNoSec("${getTodayDate()} $fajr")
-            val asrMillis = convertDateTimeNoSecToMillisNoSec("${getTodayDate()} $asr")
+            val fajrMillis = timing.convertDmyHmToMillis("${timing.getTodayDate()} $fajr")
+            val asrMillis = timing.convertDmyHmToMillis("${timing.getTodayDate()} $asr")
             val currentMillis = System.currentTimeMillis()
 
             if (currentMillis in fajrMillis until asrMillis) {
@@ -81,29 +83,6 @@ class AzkarFragment : Fragment() {
             }
         }
     }
-
-//    private fun handleMenu() {
-//        requireActivity().addMenuProvider(
-//            object : MenuProvider {
-//                override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-//                    menuInflater.inflate(R.menu.menu_azkar, menu)
-//                }
-//
-//                override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-//                    when (menuItem.itemId) {
-//                        R.id.sabah -> {
-//                            isDay.value = true
-//                        }
-//                        R.id.masaa -> {
-//                            isDay.value = false
-//                        }
-//                        else -> return false
-//                    }
-//                    return true
-//                }
-//            }, viewLifecycleOwner, Lifecycle.State.RESUMED
-//        )
-//    }
 
     private fun controller() {
         binding.next.setOnClickListener {

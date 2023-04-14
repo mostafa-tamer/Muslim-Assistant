@@ -5,7 +5,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.muslimsAssistant.ChannelIDs
 import com.example.muslimsAssistant.NotificationCodes
-import com.example.muslimsAssistant.fragments.repository.PrayerTimesRepository
+import com.example.muslimsAssistant.repository.PrayerTimesRepository
 import com.example.muslimsAssistant.notifications.AlarmManagerHelper
 import com.example.muslimsAssistant.notifications.NotificationHelper
 import org.koin.java.KoinJavaComponent.get
@@ -24,10 +24,9 @@ class DownloadPrayerTimesWorker(
             get<PrayerTimesRepository>(PrayerTimesRepository::class.java)
                 .updatePrayerTimesDatabase()
             val alarmManagerHelper = AlarmManagerHelper(applicationContext)
-            alarmManagerHelper.setPrayerTimes()
+            alarmManagerHelper.scheduleAlarms()
             Result.success()
         } catch (e: Exception) {
-
             val notification = NotificationHelper(
                 applicationContext,
                 ChannelIDs.PRIORITY_MAX.ID,
@@ -37,7 +36,6 @@ class DownloadPrayerTimesWorker(
             )
 
             notification.startNotification()
-
             Result.retry()
         }
     }

@@ -8,12 +8,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.muslimsAssistant.R
+import com.example.muslimsAssistant.Timing
 import com.example.muslimsAssistant.database.ReminderItem
 import com.example.muslimsAssistant.databinding.EditTextBinding
 import com.example.muslimsAssistant.databinding.FragmentReminderBinding
 import com.example.muslimsAssistant.utils.CustomAlertDialog
 import com.example.muslimsAssistant.utils.CustomList
 import com.example.muslimsAssistant.utils.cancelPendingIntent
+import com.example.muslimsAssistant.utils.dayInMillis
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import kotlinx.coroutines.runBlocking
@@ -29,8 +31,10 @@ class ReminderFragment : Fragment() {
     private lateinit var adapter: ReminderAdapter
 
     private lateinit var clearListAlertDialog: CustomAlertDialog
-
     private lateinit var addReminderAlertDialog: CustomAlertDialog
+
+    private val timing by lazy { Timing() }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -128,38 +132,7 @@ class ReminderFragment : Fragment() {
         val calendar = Calendar.getInstance()
         val hour: Int = calendar.get(Calendar.HOUR_OF_DAY)
         val minute: Int = calendar.get(Calendar.MINUTE)
-//
-//        val builder = MaterialAlertDialogBuilder(requireContext())
-//        val timePicker = TimePickerBinding.inflate(layoutInflater).root
-//        builder.setView(
-//            timePicker
-//        )
-//
-//        timePicker.setIs24HourView(is24HourFormat(requireContext()))
-//        timePicker.hour = hour
-//        timePicker.minute = minute
-//
-//        builder.setPositiveButton("OK") { dialog, which ->
-//            var hourString = timePicker.hour.toString()
-//            var minuteString = timePicker.minute.toString()
-//            if (hourString.length == 1) {
-//                hourString = "0$hourString"
-//            }
-//            if (minuteString.length == 1) {
-//                minuteString = "0$minuteString"
-//            }
-//
-//            itemsList.add(
-//                ReminderItem(
-//                    System.currentTimeMillis().toInt(), text, hourString, minuteString
-//                )
-//            )
-//            adapter.notifyItemInserted(itemsList.size - 1)
-//            binding.reminderItemsContainer.layoutManager?.scrollToPosition(itemsList.size - 1)
-//        }
-//        builder.setNegativeButton("Cancel") { _, _ -> }
-//
-//        builder.show()
+
 
         val picker = MaterialTimePicker.Builder()
             .setTimeFormat(clockFormat).setHour(hour).setMinute(minute).setTitleText("Set Reminder")
@@ -178,9 +151,15 @@ class ReminderFragment : Fragment() {
                 minuteString = "0$minuteString"
             }
 
+            val timeString = timing.convertHmTo12HrsFormat("$hourString:$minuteString")
+
             itemsList.add(
                 ReminderItem(
-                    System.currentTimeMillis().toInt(), text, hourString, minuteString
+                    (System.currentTimeMillis() % dayInMillis).toInt(),
+                    text,
+                    picker.hour,
+                    picker.minute,
+                    timeString
                 )
             )
             adapter.notifyItemInserted(itemsList.size - 1)

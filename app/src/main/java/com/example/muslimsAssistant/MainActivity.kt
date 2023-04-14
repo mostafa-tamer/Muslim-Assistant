@@ -1,14 +1,21 @@
 package com.example.muslimsAssistant
 
-import android.media.MediaPlayer
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.IntentSender
 import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationManagerCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.ui.AppBarConfiguration
 import com.example.muslimsAssistant.databinding.ActivityMainBinding
 import com.example.muslimsAssistant.notifications.ChannelHelper
+import com.example.muslimsAssistant.widgets.PrayerTimesWidget
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
 
 
 class MainActivity : AppCompatActivity() {
@@ -26,12 +33,18 @@ class MainActivity : AppCompatActivity() {
 
         cancelNotifications()
         channelCreator()
+ 
+
+        val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
+        val componentName = ComponentName(applicationContext, PrayerTimesWidget::class.java)
+        val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
+        val widget = PrayerTimesWidget()
+        widget.onUpdate(applicationContext, appWidgetManager, appWidgetIds)
 
 
 
-
-//        drawerLayoutSetup()
     }
+
 
     private fun drawerLayoutSetup() {
 //        drawerLayout = binding.drawerLayout

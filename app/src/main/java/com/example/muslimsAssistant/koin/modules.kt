@@ -5,9 +5,10 @@ import androidx.room.Room
 import com.example.muslimsAssistant.database.Database
 import com.example.muslimsAssistant.fragments.prayerTimesFragment.PrayerTimesViewModel
 import com.example.muslimsAssistant.fragments.reminderFragment.ReminderViewModel
-import com.example.muslimsAssistant.fragments.repository.PrayerTimesRepository
 import com.example.muslimsAssistant.fragments.tasbeehFragment.TasbeehViewModel
 import com.example.muslimsAssistant.network.ApiService
+import com.example.muslimsAssistant.repository.PrayerTimesRepository
+import com.example.muslimsAssistant.repository.RemindersRepository
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
@@ -22,7 +23,7 @@ val viewModelsModule = module {
         PrayerTimesViewModel(repository = get())
     }
     viewModel {
-        ReminderViewModel(reminderItemsDao = get())
+        ReminderViewModel(remindersRepository = get())
     }
     viewModel {
         TasbeehViewModel(tasbeehDao = get())
@@ -36,6 +37,9 @@ val repositoriesModule = module {
             userDataSource = get(),
             apiService = get()
         )
+    }
+    factory {
+        RemindersRepository(remindersDao = get())
     }
 }
 
@@ -54,10 +58,10 @@ val DAOs = module {
         get<Database>().prayerTimesDao
     }
     single {
-        get<Database>().userDao
+        get<Database>().latLngDao
     }
     single {
-        get<Database>().reminderItems
+        get<Database>().remindersDao
     }
     single {
         get<Database>().tasbeehDao

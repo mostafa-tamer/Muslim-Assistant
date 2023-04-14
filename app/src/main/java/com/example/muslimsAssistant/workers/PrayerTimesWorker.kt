@@ -21,7 +21,7 @@ class PrayerTimesWorker(
     override suspend fun doWork(): Result {
         return try {
             val alarmManagerHelper = AlarmManagerHelper(applicationContext)
-            alarmManagerHelper.setPrayerTimes()
+            alarmManagerHelper.scheduleAlarms()
             Result.success()
         } catch (e: Exception) {
 

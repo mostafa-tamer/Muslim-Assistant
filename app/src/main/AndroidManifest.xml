@@ -21,6 +21,7 @@
         <activity
             android:name="com.example.muslimsAssistant.MainActivity"
             android:exported="true"
+            android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,9 +30,21 @@
             </intent-filter>
         </activity>
 
+        <receiver android:name=".widgets.PrayerTimesWidget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                android:resource="@xml/widget_provider" />
+        </receiver>
+
         <receiver android:name="com.example.muslimsAssistant.receivers.PrayerTimesReceiver" />
-        <receiver android:name="com.example.muslimsAssistant.receivers.ActionReceiver" />
+        <receiver android:name="com.example.muslimsAssistant.receivers.WidgetReceiver" />
         <receiver android:name="com.example.muslimsAssistant.receivers.ReminderReceiver" />
+
+        <service android:name=".widgets.PrayerTimesWidgetService"/>
+
     </application>
 
 </manifest>

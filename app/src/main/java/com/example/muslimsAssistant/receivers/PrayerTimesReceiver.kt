@@ -8,7 +8,10 @@ import com.example.muslimsAssistant.ChannelIDs
 import com.example.muslimsAssistant.NotificationCodes
 import com.example.muslimsAssistant.R
 import com.example.muslimsAssistant.notifications.NotificationHelper
-import java.lang.Thread.sleep
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class PrayerTimesReceiver : BroadcastReceiver() {
 
@@ -27,7 +30,6 @@ class PrayerTimesReceiver : BroadcastReceiver() {
     }
 
     private fun azkarNotification() {
-        sleep(5000 * 60)
         when (value) {
             "الفجر" -> {
                 NotificationHelper(
@@ -58,6 +60,10 @@ class PrayerTimesReceiver : BroadcastReceiver() {
             "حان وقت الصلاة",
             "صلاة $value الآن"
         ).startNotification()
-        MediaPlayer.create(context, R.raw.allahakbar).start()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            MediaPlayer.create(context, R.raw.allahakbar).start()
+            this.cancel()
+        }
     }
 }

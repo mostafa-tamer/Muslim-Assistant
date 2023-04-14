@@ -2,31 +2,32 @@ package com.example.muslimsAssistant
 
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
-object Timing {
+class Timing {
     private val localDefault = Locale.getDefault()
-    private val fullDateTimeFormat = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", localDefault)
-    private val dateTimeFormatNoSecs = SimpleDateFormat("dd-MM-yyyy HH:mm", localDefault)
-    private val dateFormat = SimpleDateFormat("dd-MM-yyyy", localDefault)
-    private val timeFormat = SimpleDateFormat("HH:mm:ss", localDefault)
-
+    private val simpleDateFormatDmyHms = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", localDefault)
+    private val simpleDateFormatDmyHm = SimpleDateFormat("dd-MM-yyyy HH:mm", localDefault)
+    private val simpleDateFormatDmy = SimpleDateFormat("dd-MM-yyyy", localDefault)
+    private val simpleDateFormatHm = SimpleDateFormat("HH:mm", localDefault)
+    private val simpleDateFormatHmAm = SimpleDateFormat("h:mm a", localDefault)
+    private val simpleDateFormatHms = SimpleDateFormat("HH:mm:ss", localDefault)
+    private val utcTimeZone = TimeZone.getTimeZone("UTC")
 
     init {
-        println("Today Date: " + getTodayDate())
-        println("Tomorrow Date: " + getTomorrowDate())
-        println("Current Month: " + getCurrentMonth())
-        println("Year Of Current Month: " + getYearOfCurrentMonth())
-        println("Next Month: " + getNextMonth())
-        println("Year Of Next Month: " + getYearOfNextMonth())
+//        println("Today Date: " + getTodayDate())
+//        println("Tomorrow Date: " + getTomorrowDate())
+//        println("Current Month: " + getCurrentMonth())
+//        println("Year Of Current Month: " + getYearOfCurrentMonth())
+//        println("Next Month: " + getNextMonth())
+//        println("Year Of Next Month: " + getYearOfNextMonth())
     }
 
-    fun getTodayDate(): String = dateFormat.format(Calendar.getInstance().time)
+    fun getTodayDate(): String = simpleDateFormatDmy.format(Calendar.getInstance().time)
 
     fun getTomorrowDate(): String {
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.DATE, 1)
-        return dateFormat.format(calendar.time)
+        return simpleDateFormatDmy.format(calendar.time)
     }
 
     fun getCurrentMonth(): String {
@@ -45,7 +46,9 @@ object Timing {
             (getCurrentMonth().toInt() + 1).toString()
     }
 
-    fun getYearOfCurrentMonth(): String = Calendar.getInstance().get(Calendar.YEAR).toString()
+    fun getYearOfCurrentMonth(): String {
+        return Calendar.getInstance().get(Calendar.YEAR).toString()
+    }
 
     fun getYearOfNextMonth(): String {
         return if (getNextMonth() == "1")
@@ -54,39 +57,58 @@ object Timing {
             getYearOfCurrentMonth()
     }
 
-    fun convertDateTimeNoSecToMillisNoSec(date: String): Long =
-        dateTimeFormatNoSecs.parse(date)!!.time
+    fun convertDmyHmToMillis(date: String): Long {
+        return simpleDateFormatDmyHm.parse(date)?.time ?: 0
+    }
 
-    fun convertFullDateTimeNoSecToMillis(date: String): Long = fullDateTimeFormat.parse(date)!!.time
-    fun convertMillisToHMS(milliseconds: Long): String {
-        val hours = TimeUnit.MILLISECONDS.toHours(milliseconds)
-        val minutes = TimeUnit.MILLISECONDS.toMinutes(milliseconds) % 60
-        val seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds)
+    fun convertDmyHmsToMillis(date: String): Long {
+        return simpleDateFormatDmyHms.parse(date)?.time ?: 0
     }
-    fun convertTo12HourFormat(time24: String): String {
-        val inputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("h:mm\na", Locale.getDefault())
-        val date = inputFormat.parse(time24)
-        return outputFormat.format(date)
+
+    fun convertMillisToHMS(timeInMillis: Long, format: String): String {
+        val sdf = SimpleDateFormat(format, localDefault)
+        sdf.timeZone = utcTimeZone
+        return sdf.format(Date(timeInMillis))
     }
-    fun addOneDayToDate(dateString: String): String {
-        val date = dateFormat.parse(dateString) ?: return dateString
+
+    fun convertMillisToHm(timeInMillis: Long, format: String): String {
+        val sdf = SimpleDateFormat(format, localDefault)
+        sdf.timeZone = utcTimeZone
+        return sdf.format(Date(timeInMillis))
+    }
+
+    fun convertMillisToDmyHm(timeInMillis: Long): String {
+        return simpleDateFormatDmyHm.format(Date(timeInMillis))
+    }
+
+    fun convertMillisToHm(timeInMillis: Long): String {
+        return simpleDateFormatHm.format(Date(timeInMillis))
+    }
+
+    fun convertMillisToDmy(timeInMillis: Long): String {
+        return simpleDateFormatDmy.format(Date(timeInMillis))
+    }
+
+    fun convertHmTo12HrsFormat(time24: String): String {
+        val date: Date = simpleDateFormatHm.parse(time24) ?: Date(0)
+        return simpleDateFormatHmAm.format(date)
+    }
+
+    fun addOneDayToDmy(dateString: String): String {
+        val date = simpleDateFormatDmy.parse(dateString) ?: return dateString
         val calendar = Calendar.getInstance().apply {
             time = date
             add(Calendar.DATE, 1)
         }
-        return dateFormat.format(calendar.time)
+        return simpleDateFormatDmy.format(calendar.time)
     }
 
-    fun addOneDayToDateTime(dateString: String): String {
-        val date = dateTimeFormatNoSecs.parse(dateString) ?: return dateString
+    fun addOneDayToDmyHm(dateString: String): String {
+        val date = simpleDateFormatDmyHm.parse(dateString) ?: return dateString
         val calendar = Calendar.getInstance().apply {
             time = date
             add(Calendar.DATE, 1)
         }
-        return dateTimeFormatNoSecs.format(calendar.time)
+        return simpleDateFormatDmyHm.format(calendar.time)
     }
 }
-
-

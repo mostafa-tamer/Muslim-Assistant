@@ -8,7 +8,7 @@ data class PrayerTimes(
     @PrimaryKey
     val dateGregorian: String = "01-01-1970",
     val dateHigri: String = "01-01-1970",
-    val monthHijri: String = "محرم",
+    val monthHijri: String = "Muharram",
     val fajr: String = "00:00:00",
     val sunrise: String = "00:00:00",
     val dhuhr: String = "00:00:00",
@@ -18,12 +18,10 @@ data class PrayerTimes(
 )
 
 @Entity
-data class UserApi(
+data class LatLng(
     @PrimaryKey
-    val name: String = "User",
     val latitude: Double = 0.0,
     val longitude: Double = 0.0,
-    val method: String = "5"
 )
 
 @Entity
@@ -38,8 +36,9 @@ data class ReminderItem(
     @PrimaryKey
     val id: Int,
     val description: String,
-    val hours: String,
-    val minutes: String,
+    val hours: Int,
+    val minutes: Int,
+    val timeString: String
 )
 
 

@@ -9,7 +9,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.example.muslimsAssistant.MainActivity
 import com.example.muslimsAssistant.PendingIntentCodes
 import com.example.muslimsAssistant.R
-import com.example.muslimsAssistant.receivers.ActionReceiver
 
 class NotificationHelper(
     private val context: Context,
@@ -18,19 +17,6 @@ class NotificationHelper(
     private val notificationTitle: String,
     private val notificationText: String
 ) {
-
-    private fun setupActionIntent(): PendingIntent {
-
-        val intent = Intent(context, ActionReceiver::class.java)
-
-        return PendingIntent.getBroadcast(
-            context,
-            PendingIntentCodes.NOTIFICATION_ACTION.code,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE
-        )
-    }
-
     private fun setupClickToBackToApplicationIntent(): PendingIntent {
 
         val intent = Intent(context, MainActivity::class.java)

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/prayer_times_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_corner"
+    android:gravity="bottom"
+    android:layoutDirection="rtl"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/header_Container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/remaining_time_widget"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text=" الوقت المتبقى على صلاة الفجر \n 00:00:00"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_corner"
+        android:layoutDirection="rtl"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/widget_prayer_times_text_view_first_Row"
+                android:text="الفجر" />
+
+            <TextView
+                style="@style/widget_prayer_times_text_view_first_Row"
+                android:text="الشروق" />
+
+            <TextView
+                style="@style/widget_prayer_times_text_view_first_Row"
+                android:text="الظهر" />
+
+            <TextView
+                style="@style/widget_prayer_times_text_view_first_Row"
+                android:text="العصر" />
+
+            <TextView
+
+                style="@style/widget_prayer_times_text_view_first_Row"
+                android:text="المغرب" />
+
+            <TextView
+                style="@style/widget_prayer_times_text_view_first_Row"
+                android:text="العشاء" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/fajr"
+                style="@style/widget_prayer_times_text_view_second_row" />
+
+            <TextView
+                android:id="@+id/sunrise"
+                style="@style/widget_prayer_times_text_view_second_row" />
+
+            <TextView
+                android:id="@+id/dhuhr"
+                style="@style/widget_prayer_times_text_view_second_row" />
+
+            <TextView
+                android:id="@+id/asr"
+                style="@style/widget_prayer_times_text_view_second_row" />
+
+            <TextView
+                android:id="@+id/maghrib"
+                style="@style/widget_prayer_times_text_view_second_row" />
+
+            <TextView
+                android:id="@+id/isha"
+                style="@style/widget_prayer_times_text_view_second_row" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

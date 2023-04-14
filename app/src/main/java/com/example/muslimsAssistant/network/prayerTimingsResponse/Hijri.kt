@@ -5,6 +5,3 @@ data class Hijri(
     val month: Month
 )
 
-data class Month(
-    val ar: String
-)
