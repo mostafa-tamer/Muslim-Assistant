@@ -13,16 +13,13 @@ class PrayerTimesViewModel(
 ) : ViewModel() {
 
     val errorMessageLiveData = MutableLiveData(ErrorMessage())
-
     val isLoadingPrayerTimes = MutableLiveData(false)
-
-    val isDataLoadedObserver = MutableLiveData(false)
 
     val dateHijri = MutableLiveData<String>()
     val monthHijri = MutableLiveData<String>()
     val fajr = MutableLiveData<String>()
     val sunrise = MutableLiveData<String>()
-    val dhuhr = MutableLiveData<String>()
+    val dhuhur = MutableLiveData<String>()
     val asr = MutableLiveData<String>()
     val maghrib = MutableLiveData<String>()
     val isha = MutableLiveData<String>()
@@ -34,9 +31,8 @@ class PrayerTimesViewModel(
         isLoadingPrayerTimes.value = true
         viewModelScope.launch {
             try {
-                repository.updateUser(latitude, longitude)
+                repository.updateLatLng(latitude, longitude)
                 repository.updatePrayerTimesDatabase()
-                isDataLoadedObserver.value = true
                 errorMessageLiveData.value = ErrorMessage()
             } catch (e: IOException) {
                 println("Exception in PrayerTimesViewModel => updatePrayerTimesDatabase(): " + e.message)

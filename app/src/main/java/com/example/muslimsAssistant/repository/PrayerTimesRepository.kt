@@ -16,13 +16,15 @@ class PrayerTimesRepository(
     private val apiService: ApiService,
 ) {
 
-    private val timing  by lazy { Timing() }
+    private val timing by lazy { Timing() }
 
-    fun retPrayerTimesLiveData() = prayerTimesDataSource.retPrayerTimesLiveData()
+    fun retPrayerTimesLiveData(): LiveData<List<PrayerTimes>> {
+        return prayerTimesDataSource.retPrayerTimesLiveData()
+    }
 
     suspend fun retPrayerTimesSuspend() = prayerTimesDataSource.retPrayerTimesSuspend()
 
-    suspend fun updateUser(latitude: Double, longitude: Double) {
+    suspend fun updateLatLng(latitude: Double, longitude: Double) {
         userDataSource.insertLatLng(
             LatLng(
                 latitude = latitude,

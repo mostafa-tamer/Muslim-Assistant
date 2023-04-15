@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
-import androidx.core.view.marginLeft
 import com.example.muslimsAssistant.databinding.CustomAlertDialogBinding
 
 
@@ -40,6 +39,11 @@ class CustomAlertDialog(context: Context) {
     fun setTitle(title: String): CustomAlertDialog {
         layout.titleText.visibility = View.VISIBLE
         layout.titleText.text = title
+        return this
+    }
+
+    fun setCancelable(isCancelable: Boolean): CustomAlertDialog {
+        alertDialog.setCancelable(false)
         return this
     }
 

@@ -2,21 +2,25 @@ package com.example.muslimsAssistant.fragments.prayerTimesFragment
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.IntentSender
-import android.content.pm.PackageManager
+import android.app.Activity
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
-import com.example.muslimsAssistant.LocationCodes
-import com.example.muslimsAssistant.PermissionsCodes
 import com.example.muslimsAssistant.Timing
 import com.example.muslimsAssistant.database.PrayerTimes
 import com.example.muslimsAssistant.databinding.FragmentPrayerTimesBinding
 import com.example.muslimsAssistant.notifications.AlarmManagerHelper
+import com.example.muslimsAssistant.utils.CustomAlertDialog
 import com.example.muslimsAssistant.utils.toastErrorMessageObserver
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
@@ -30,9 +34,51 @@ class PrayerTimesFragment : Fragment() {
 
     private lateinit var binding: FragmentPrayerTimesBinding
     private val viewModel: PrayerTimesViewModel by viewModel()
+
     private lateinit var prayers: List<PrayerTimes>
+    private var todayPrayerTimes: PrayerTimes? = null
+    private var tomorrowPrayerTimes: PrayerTimes? = null
+
+    private lateinit var warningAlertDialog: CustomAlertDialog
+
     private val timer by lazy { Timer() }
     private val timing by lazy { Timing() }
+
+    private val requestPermissionLauncher: ActivityResultLauncher<String> =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                println("Location is granted")
+                requestLocationService()
+            } else {
+                println("Location is not granted")
+
+                warningAlertDialog.setTitle("Warning")
+                    .setMessage("You should enable location permission to use get the prayer times")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok") {
+                        checkPermissions()
+                    }.showDialog()
+            }
+        }
+
+    private val locationSettingsResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            println("User pressed Ok to enable location")
+            trackUserLocation()
+        } else {
+            println("Location service is not granted")
+            warningAlertDialog.setTitle("Warning")
+                .setMessage("You should enable location service to use get the prayer times")
+                .setCancelable(false)
+                .setPositiveButton("Ok") {
+                    checkPermissions()
+                }.showDialog()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -43,16 +89,25 @@ class PrayerTimesFragment : Fragment() {
 
         prayers = runBlocking { viewModel.retPrayerTimesSuspend() }
 
+        todayPrayerTimes = getPrayerTimesSelectedData(timing.getTodayDate())
+        tomorrowPrayerTimes = getPrayerTimesSelectedData(timing.getTomorrowDate())
 
-        setAlarmManagerAndUpdateUI()
+        warningAlertDialog = CustomAlertDialog(requireContext())
 
         observers()
         listeners()
+ 
         checkPermissions()
+        updateUI()
+        schedulePrayerTimesNotifications()
+
 
         return binding.root
     }
 
+    private fun schedulePrayerTimesNotifications() {
+        AlarmManagerHelper(requireContext()).scheduleAlarms()
+    }
 
     private fun requestLocationService() {
         val locationRequest = LocationRequest.create().apply {
@@ -67,97 +122,40 @@ class PrayerTimesFragment : Fragment() {
         val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
 
         task.addOnSuccessListener {
-
+            trackUserLocation()
+            println("Location is enabled")
         }.addOnFailureListener { exception ->
             if (exception is ResolvableApiException) {
                 try {
-                    // Show the dialog by calling startResolutionForResult(),
-                    // and check the result in onActivityResult()
-                    exception.startResolutionForResult(
-                        requireActivity(),
-                        LocationCodes.REQUEST_LOCATION_SERVICE.code
+                    locationSettingsResultLauncher.launch(
+                        IntentSenderRequest.Builder(exception.resolution).build()
                     )
-                } catch (sendEx: IntentSender.SendIntentException) {
-                    // Ignore the error
+                } catch (_: Exception) {
                 }
             }
         }
     }
 
+    private fun createPrayerRowListener(prayerTime: String): ((View) -> Unit) {
+        return {
+            todayPrayerTimes?.let {
+                Toast.makeText(
+                    requireContext(),
+                    getRemainingAgo(prayerTime),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
     private fun listeners() {
-        val prayerTimes: PrayerTimes? = getPrayerTimesSelectedData(timing.getTodayDate())
-        var toast: Toast? = null
-
-        binding.fajrRow.setOnClickListener {
-            prayerTimes?.let {
-                toast?.cancel()
-                toast = Toast.makeText(
-                    requireContext(),
-                    getRemainingAgo(prayerTimes.fajr),
-                    Toast.LENGTH_SHORT
-                )
-                toast?.show()
-            }
-        }
-
-        binding.sunriseRow.setOnClickListener {
-            prayerTimes?.let {
-                toast?.cancel()
-                toast = Toast.makeText(
-                    requireContext(),
-                    getRemainingAgo(prayerTimes.sunrise),
-                    Toast.LENGTH_SHORT
-                )
-                toast?.show()
-            }
-        }
-
-        binding.dhuhrRow.setOnClickListener {
-            prayerTimes?.let {
-                toast?.cancel()
-                toast = Toast.makeText(
-                    requireContext(),
-                    getRemainingAgo(prayerTimes.dhuhr),
-                    Toast.LENGTH_SHORT
-                )
-                toast?.show()
-            }
-        }
-
-        binding.asrRow.setOnClickListener {
-            prayerTimes?.let {
-                toast?.cancel()
-                toast = Toast.makeText(
-                    requireContext(),
-                    getRemainingAgo(prayerTimes.asr),
-                    Toast.LENGTH_SHORT
-                )
-                toast?.show()
-            }
-        }
-
-        binding.maghribRow.setOnClickListener {
-            prayerTimes?.let {
-                toast?.cancel()
-                toast = Toast.makeText(
-                    requireContext(),
-                    getRemainingAgo(prayerTimes.maghrib),
-                    Toast.LENGTH_SHORT
-                )
-                toast?.show()
-            }
-        }
-
-        binding.ishaRow.setOnClickListener {
-            prayerTimes?.let {
-                toast?.cancel()
-                toast = Toast.makeText(
-                    requireContext(),
-                    getRemainingAgo(prayerTimes.isha),
-                    Toast.LENGTH_SHORT
-                )
-                toast?.show()
-            }
+        todayPrayerTimes?.let {
+            binding.fajrRow.setOnClickListener(createPrayerRowListener(it.fajr))
+            binding.sunriseRow.setOnClickListener(createPrayerRowListener(it.sunrise))
+            binding.dhuhrRow.setOnClickListener(createPrayerRowListener(it.dhuhr))
+            binding.asrRow.setOnClickListener(createPrayerRowListener(it.asr))
+            binding.maghribRow.setOnClickListener(createPrayerRowListener(it.maghrib))
+            binding.ishaRow.setOnClickListener(createPrayerRowListener(it.isha))
         }
     }
 
@@ -181,8 +179,8 @@ class PrayerTimesFragment : Fragment() {
     }
 
     private fun observers() {
-        isLoadingDataBusyObserver()
-        updateUIObserver()
+        isDataLoadingObserver()
+        prayerTimesDatabaseObserver()
         toastErrorMessageObserver(
             viewModel.errorMessageLiveData,
             viewLifecycleOwner,
@@ -190,17 +188,18 @@ class PrayerTimesFragment : Fragment() {
         )
     }
 
-    private fun updateUIObserver() {
-        viewModel.isDataLoadedObserver.observe(viewLifecycleOwner) {
-            if (it) {
-                prayers = runBlocking { viewModel.retPrayerTimesSuspend() }
-                setAlarmManagerAndUpdateUI()
-                listeners()
-            }
+    private fun prayerTimesDatabaseObserver() {
+        viewModel.retPrayerTimesLiveData().observe(viewLifecycleOwner) {
+            prayers = it
+            todayPrayerTimes = getPrayerTimesSelectedData(timing.getTodayDate())
+            tomorrowPrayerTimes = getPrayerTimesSelectedData(timing.getTomorrowDate())
+
+            updateUI()
+            schedulePrayerTimesNotifications()
         }
     }
 
-    private fun isLoadingDataBusyObserver() {
+    private fun isDataLoadingObserver() {
         viewModel.isLoadingPrayerTimes.observe(viewLifecycleOwner) {
             if (it == false) {
                 binding.progressBar.visibility = View.INVISIBLE
@@ -210,62 +209,39 @@ class PrayerTimesFragment : Fragment() {
         }
     }
 
-    private fun setAlarmManagerAndUpdateUI() {
-        updateUI()
-        val alarmManagerHelper = AlarmManagerHelper(requireContext())
-        alarmManagerHelper.scheduleAlarms()
-    }
 
-    @Suppress("DEPRECATION")
     private fun checkPermissions() {
-        if (ActivityCompat.checkSelfPermission(
-                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            requestPermissions(
-                arrayOf(
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ), PermissionsCodes.ACCESS_COARSE_LOCATION.code
-            )
-        } else {
-            trackUserLocation()
-        }
+        requestPermissionLauncher.launch(Manifest.permission.ACCESS_COARSE_LOCATION)
     }
 
     @SuppressLint("MissingPermission")
     private fun trackUserLocation() {
-        requestLocationService()
-        LocationServices
-            .getFusedLocationProviderClient(requireActivity())
-            .lastLocation
-            .addOnSuccessListener {
-                if (it != null) {
-                    println("LatLng ${it.latitude} ${it.longitude}")
-                    viewModel.updateUserLocationAndPrayerTimes(
-                        it.latitude,
-                        it.longitude
-                    )
-
-                } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Check the internet and location",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, grantResults: IntArray
-    ) {
-        if (requestCode == PermissionsCodes.ACCESS_COARSE_LOCATION.code &&
-            grantResults.isNotEmpty() &&
-            grantResults[0] == PackageManager.PERMISSION_GRANTED
-        ) {
-            trackUserLocation()
+        val locationRequest = LocationRequest.create().apply {
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = 1000 // Request location updates every 10 seconds
         }
+
+        val fusedLocationProviderClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    super.onLocationResult(locationResult)
+
+                    locationResult.lastLocation.let { location ->
+                        println("LatLng ${location.latitude} ${location.longitude}")
+                        viewModel.updateUserLocationAndPrayerTimes(
+                            location.latitude,
+                            location.longitude
+                        )
+                        fusedLocationProviderClient.removeLocationUpdates(this)
+                    }
+                }
+            },
+            Looper.getMainLooper()
+        )
     }
 
     private fun getPrayerTimesSelectedData(
@@ -295,16 +271,15 @@ class PrayerTimesFragment : Fragment() {
     }
 
     private fun updatePrayerTimesContainer() {
-        val prayerTimes = getPrayerTimesSelectedData(timing.getTodayDate())
-        if (prayerTimes != null) {
-            viewModel.dateHijri.value = prayerTimes.dateHigri
-            viewModel.monthHijri.value = prayerTimes.monthHijri
-            viewModel.fajr.value = timing.convertHmTo12HrsFormat(prayerTimes.fajr)
-            viewModel.sunrise.value = timing.convertHmTo12HrsFormat(prayerTimes.sunrise)
-            viewModel.dhuhr.value = timing.convertHmTo12HrsFormat(prayerTimes.dhuhr)
-            viewModel.asr.value = timing.convertHmTo12HrsFormat(prayerTimes.asr)
-            viewModel.maghrib.value = timing.convertHmTo12HrsFormat(prayerTimes.maghrib)
-            viewModel.isha.value = timing.convertHmTo12HrsFormat(prayerTimes.isha)
+        todayPrayerTimes?.let {
+            viewModel.dateHijri.value = it.dateHigri
+            viewModel.monthHijri.value = it.monthHijri
+            viewModel.fajr.value = timing.convertHmTo12HrsFormat(it.fajr)
+            viewModel.sunrise.value = timing.convertHmTo12HrsFormat(it.sunrise)
+            viewModel.dhuhur.value = timing.convertHmTo12HrsFormat(it.dhuhr)
+            viewModel.asr.value = timing.convertHmTo12HrsFormat(it.asr)
+            viewModel.maghrib.value = timing.convertHmTo12HrsFormat(it.maghrib)
+            viewModel.isha.value = timing.convertHmTo12HrsFormat(it.isha)
         }
     }
 
@@ -314,15 +289,14 @@ class PrayerTimesFragment : Fragment() {
     }
 
     private fun setRemainingTime() {
-        val todayPrayerTimes = getPrayerTimesSelectedData(timing.getTodayDate())
         var foundToday = false
-        if (todayPrayerTimes != null) {
+        todayPrayerTimes?.let {
             val prayerTimesStrings = mapOf(
-                todayPrayerTimes.fajr to "الفجر",
-                todayPrayerTimes.dhuhr to "الظهر",
-                todayPrayerTimes.asr to "العصر",
-                todayPrayerTimes.maghrib to "المغرب",
-                todayPrayerTimes.isha to "العشاء",
+                it.fajr to "الفجر",
+                it.dhuhr to "الظهر",
+                it.asr to "العصر",
+                it.maghrib to "المغرب",
+                it.isha to "العشاء",
             )
             for (i in prayerTimesStrings) {
                 val prayerTimeMillis =
@@ -352,11 +326,9 @@ class PrayerTimesFragment : Fragment() {
 
         binding.remaining.text = "الوقت المتبقي على صلاة الفجر"
 
-        val tomorrowPrayerTimes = getPrayerTimesSelectedData(timing.getTomorrowDate())
-
-        if (tomorrowPrayerTimes != null) {
+        tomorrowPrayerTimes?.let {
             val tomorrowFajrTimeMillis =
-                timing.convertDmyHmToMillis("${timing.getTomorrowDate()} ${tomorrowPrayerTimes.fajr}")
+                timing.convertDmyHmToMillis("${timing.getTomorrowDate()} ${it.fajr}")
             val currentTimeMillis = System.currentTimeMillis()
 
             if (currentTimeMillis < tomorrowFajrTimeMillis) {

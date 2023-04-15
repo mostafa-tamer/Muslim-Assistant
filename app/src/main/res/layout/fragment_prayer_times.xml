@@ -176,7 +176,7 @@
                             <TextView
                                 android:id="@+id/dhuhr"
                                 android:hint="00:00"
-                                android:text="@{homeViewModel.dhuhr}"
+                                android:text="@{homeViewModel.dhuhur}"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textColorHint="@color/white"
