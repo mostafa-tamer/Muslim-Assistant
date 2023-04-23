@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.muslimsAssistant">
+    package="com.android.muslimAssistant">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:name="com.example.muslimsAssistant.MuslimsAssistantApplication"
+        android:name="com.android.muslimAssistant.MuslimAssistantApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -16,34 +17,60 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/pray"
         android:supportsRtl="true"
-        android:theme="@style/Theme.QuranReminder"
+        android:theme="@style/Theme.MuslimAssistant"
         tools:targetApi="31">
+
         <activity
-            android:name="com.example.muslimsAssistant.MainActivity"
+            android:name="com.android.muslimAssistant.activities.LauncherActivity"
             android:exported="true"
-            android:launchMode="singleTop"
+            android:icon="@drawable/pray"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <receiver android:name=".widgets.PrayerTimesWidget"
+        <activity
+            android:name="com.android.muslimAssistant.activities.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MuslimAssistant"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.android.muslimAssistant.activities.StarterConfigurationActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <activity
+            android:name="com.android.muslimAssistant.activities.ConfigurationActivity"
+            android:exported="true"
+            android:theme="@style/Theme.MuslimAssistant"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <receiver
+            android:name="com.android.muslimAssistant.widgets.PrayerTimesWidget"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
+            <meta-data
+                android:name="android.appwidget.provider"
                 android:resource="@xml/widget_provider" />
         </receiver>
 
-        <receiver android:name="com.example.muslimsAssistant.receivers.PrayerTimesReceiver" />
-        <receiver android:name="com.example.muslimsAssistant.receivers.WidgetReceiver" />
-        <receiver android:name="com.example.muslimsAssistant.receivers.ReminderReceiver" />
+        <receiver android:name="com.android.muslimAssistant.receivers.PrayerTimesReceiver" />
+        <receiver android:name="com.android.muslimAssistant.receivers.NotificationActionReceiver" />
 
-        <service android:name=".widgets.PrayerTimesWidgetService"/>
+        <receiver android:name="com.android.muslimAssistant.receivers.ReminderReceiver" />
+
+        <service
+            android:name="com.android.muslimAssistant.widgets.PrayerTimesWidgetService"
+            android:enabled="true"
+            android:foregroundServiceType="dataSync" />
 
     </application>
 

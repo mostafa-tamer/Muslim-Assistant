@@ -2,13 +2,14 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
     compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.muslimsAssistant"
+        applicationId "com.android.muslimAssistant"
         minSdk 26
         targetSdk 33
         versionCode 1
@@ -95,4 +96,8 @@ dependencies {
     //ripple
     implementation 'com.balysv:material-ripple:1.0.2'
     implementation 'com.google.android.material:material:1.8.0'
+
+    //shared preferences
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
 }

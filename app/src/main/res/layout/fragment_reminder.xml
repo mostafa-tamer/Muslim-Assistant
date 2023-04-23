@@ -35,7 +35,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@drawable/rounded_corner"
-                    android:text="مسح الكل"
+                    android:text="@string/delete_all"
                     android:textColor="@color/white" />
             </com.balysv.materialripple.MaterialRippleLayout>
         </androidx.cardview.widget.CardView>
@@ -62,7 +62,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/rounded_corner"
-                    android:text="إضافة تذكير"
+                    android:text="@string/add_reminder"
                     android:textColor="@color/white" />
             </com.balysv.materialripple.MaterialRippleLayout>
         </androidx.cardview.widget.CardView>

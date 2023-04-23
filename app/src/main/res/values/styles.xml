@@ -55,11 +55,9 @@
 
     <style name="widget_prayer_times_text_view_second_row">
         <item name="android:textStyle">bold</item>
-
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>
-
         <item name="android:paddingBottom">6dp</item>
         <item name="android:hint">00:00\nam</item>
         <item name="android:textColorHint">@color/white</item>
@@ -68,5 +66,11 @@
         <item name="android:textSize">18dp</item>
     </style>
 
-
+    <style name="MyTimePickerDark" parent="android:Widget.Material.TimePicker">
+        <item name="android:headerBackground">#FF5722</item>
+        <item name="android:numbersTextColor">#673AB7</item>
+        <item name="android:numbersSelectorColor">#FFEB3B</item>
+        <item name="android:numbersBackgroundColor">#61E761</item>
+        <item name="android:background">#FFC107</item>
+    </style>
 </resources>

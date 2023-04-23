@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/antique_white">
+
+    <com.balysv.materialripple.MaterialRippleLayout
+        style="@style/ripple_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.android.muslimAssistant.utils.CustomButton
+            android:id="@+id/method_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/blue"
+            android:padding="10dp"
+            android:text="5 - Egyptian General Authority of Survey"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="16dp"
+            android:textStyle="bold" />
+    </com.balysv.materialripple.MaterialRippleLayout>
+</LinearLayout>

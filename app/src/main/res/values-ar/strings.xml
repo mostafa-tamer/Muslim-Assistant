@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="fajr">الفجر</string>
+    <string name="sunrise">الشروق</string>
+    <string name="dhuhur">الظهر</string>
+    <string name="asr">العصر</string>
+    <string name="maghrib">المغرب</string>
+    <string name="isha">العشاء</string>
+    <string name="time_remaining_to_fajr_prayer">الوقت المتبقي على صلاة الفجر</string>
+    <string name="muharram">محرم</string>
+    <string name="locationPermissionRequest">يجب عليك تفعيل اذن الوصول الى الموقع لتحميل اوقات الصلاة</string>
+    <string name="warning">تحذير</string>
+    <string name="Ok">حسناً</string>
+    <string name="locationServiceRequest">يجب تفعيل خدمة الموقع لتحميل اوقات الصلاة</string>
+    <string name="LocationServiceIsNotGranted">خدمة الموقع غير مفعلة</string>
+    <string name="remainingTime">الوقت المتبقي على صلاة </string>
+    <string name="eveningRemembrance">أذكار المساء</string>
+    <string name="morningRemembrance">أذكار الصباح</string>
+    <string name="areYouSureYouWantToRemoveAllReminders">هل أنت متأكد من أنك تريد حذف جميع التذكيرات؟</string>
+    <string name="listIsEmpty">القائمة خالية</string>
+    <string name="tryAgain">حاول مرة أخرى...</string>
+    <string name="pleaseDoYourConfigurations">قم بملء النص واختر الوقت</string>
+    <string name="hours">ساعة</string>
+    <string name="minutes">دقائق</string>
+    <string name="write_your_reminder_description">اكتب وصف التذكير</string>
+    <string name="select_approach">إختر الطريقة</string>
+    <string name="interval">كل مدة زمنية</string>
+    <string name="exact_timer">كل يوم في نفس الوقت</string>
+    <string name="add_reminder">إضافة تذكير</string>
+    <string name="delete_all">مسح الكل</string>
+    <string name="and"> و </string>
+    <string name="_20_minutes">20 دقيقة</string>
+    <string name="Every">كل</string>
+    <string name="cancel">أغلق</string>
+    <string name="select_language">إختر اللغة:</string>
+    <string name="select_method">إختر الطريقة:</string>
+    <string name="reset">إعادة تعيين</string>
+    <string name="notifications">الإشعارات</string>
+    <string name="highest_dhikr">أعلى عدد من الذكر:</string>
+    <string name="dhikrText">الذكر:</string>
+    <string name="indicatorMax">أعلى قيمة للمؤشر</string>
+
+</resources>
+
+

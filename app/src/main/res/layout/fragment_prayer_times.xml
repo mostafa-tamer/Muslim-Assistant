@@ -6,7 +6,7 @@
 
         <variable
             name="homeViewModel"
-            type="com.example.muslimsAssistant.fragments.prayerTimesFragment.PrayerTimesViewModel" />
+            type="com.android.muslimAssistant.fragments.prayerTimesFragment.PrayerTimesViewModel" />
     </data>
 
 
@@ -32,20 +32,18 @@
                         android:id="@+id/monthHijri"
                         text="@{homeViewModel.monthHijri}"
                         android:layout_marginLeft="10dp"
-                        android:hint="Muharram"
-                        android:textAlignment="textStart"
+                        android:hint="@string/muharram"
+                        android:textAlignment="viewStart"
                         android:textColor="@color/blue"
-                        android:textColorHint="@color/black"
+                        android:textColorHint="@color/blue"
                         android:textSize="28dp"
                         android:textStyle="bold" />
-
-
                     <TextView
                         android:id="@+id/date"
                         text="@{homeViewModel.dateHijri}"
                         android:layout_marginRight="10dp"
                         android:hint="01/01/0001"
-                        android:textAlignment="textEnd"
+                        android:textAlignment="viewEnd"
                         android:textColor="@color/blue"
                         android:textColorHint="@color/blue"
                         android:textSize="28dp"
@@ -64,7 +62,7 @@
                     android:id="@+id/remaining"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="الوقت المتبقي على صلاة الفجر"
+                    android:text="@string/time_remaining_to_fajr_prayer"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="20dp"
@@ -101,7 +99,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/rounded_corner"
-                        android:layoutDirection="rtl"
                         android:stretchColumns="*">
 
                         <TableRow
@@ -113,7 +110,7 @@
                             android:gravity="center">
 
                             <TextView
-                                android:text="الفجر"
+                                android:text="@string/fajr"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textSize="24dp"
@@ -140,7 +137,7 @@
                             android:gravity="center">
 
                             <TextView
-                                android:text="الشروق"
+                                android:text="@string/sunrise"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textSize="24dp"
@@ -167,7 +164,7 @@
                             android:gravity="center">
 
                             <TextView
-                                android:text="الظهر"
+                                android:text="@string/dhuhur"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textSize="24dp"
@@ -193,7 +190,7 @@
                             android:gravity="center">
 
                             <TextView
-                                android:text="العصر"
+                                android:text="@string/asr"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textSize="24dp"
@@ -219,7 +216,7 @@
                             android:gravity="center">
 
                             <TextView
-                                android:text="المغرب"
+                                android:text="@string/maghrib"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textSize="24dp"
@@ -244,7 +241,7 @@
                             android:gravity="center">
 
                             <TextView
-                                android:text="العشاء"
+                                android:text="@string/isha"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textSize="24dp"
@@ -278,7 +275,6 @@
             android:indeterminate="true"
             app:indicatorColor="@color/blue"
             app:trackThickness="6dp" />
-
     </FrameLayout>
 
 </layout>
