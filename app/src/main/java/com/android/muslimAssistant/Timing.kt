@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class Timing {
-    private val localDefault = Locale.getDefault()
+    private val localDefault = Locale.ENGLISH
     private val simpleDateFormatDmyHms = SimpleDateFormat("dd-MM-yyyy HH:mm:ss", localDefault)
     private val simpleDateFormatDmyHm = SimpleDateFormat("dd-MM-yyyy HH:mm", localDefault)
     private val simpleDateFormatDmy = SimpleDateFormat("dd-MM-yyyy", localDefault)

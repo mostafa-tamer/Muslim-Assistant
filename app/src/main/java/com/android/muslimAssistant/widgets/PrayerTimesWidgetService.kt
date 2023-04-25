@@ -99,7 +99,7 @@ class PrayerTimesWidgetService : Service() {
         if (todayPrayerTimes != null) {
             val prayerTimesStrings = mapOf(
                 todayPrayerTimes.fajr to "الفجر",
-                todayPrayerTimes.dhuhr to "الظهر",
+                todayPrayerTimes.dhuhur to "الظهر",
                 todayPrayerTimes.asr to "العصر",
                 todayPrayerTimes.maghrib to "المغرب",
                 todayPrayerTimes.isha to "العشاء",

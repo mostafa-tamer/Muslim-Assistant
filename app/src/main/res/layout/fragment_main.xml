@@ -8,7 +8,6 @@
     tools:context=".fragments.mainFragment.MainFragment">
 
     <androidx.viewpager2.widget.ViewPager2
-
         android:id="@+id/view_pager_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -25,97 +24,67 @@
         app:tabBackground="@color/blue">
 
 
-        <com.balysv.materialripple.MaterialRippleLayout
-            style="@style/ripple_style"
+        <ImageButton
+
+            android:id="@+id/azkar_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/card_view_button"
+            android:padding="15dp"
+            android:src="@drawable/day_and_night"
+            android:text="تسبيح"
+            android:textColor="@color/white"
 
-            <ImageButton
-
-                android:id="@+id/azkar_button"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="@drawable/card_view_button"
-                android:padding="15dp"
-                android:src="@drawable/day_and_night"
-                android:text="تسبيح"
-                android:textColor="@color/white"
-                android:textSize="18dp"
-                android:textStyle="bold" />
-        </com.balysv.materialripple.MaterialRippleLayout>
+            android:textSize="18dp"
+            android:textStyle="bold" />
 
 
-        <com.balysv.materialripple.MaterialRippleLayout
-            style="@style/ripple_style"
-            android:layout_width="match_parent"
-
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageButton
-                android:id="@+id/prayer_times_button"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="@drawable/card_view_button"
-                android:padding="16dp"
-                android:src="@drawable/praying"
-                android:text="تسبيح"
-                android:textColor="@color/white"
-                android:textSize="18dp"
-                android:textStyle="bold" />
-        </com.balysv.materialripple.MaterialRippleLayout>
-
-
-
-
-
-
-        <com.balysv.materialripple.MaterialRippleLayout
-            style="@style/ripple_style"
+        <ImageButton
+            android:id="@+id/prayer_times_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/card_view_button"
+            android:padding="16dp"
+            android:src="@drawable/praying"
+            android:text="تسبيح"
 
-            <ImageButton
-                android:id="@+id/reminder_button"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="@drawable/card_view_button"
-                android:padding="15dp"
-                android:src="@drawable/alarm_clock"
-                android:text="تسبيح"
-                android:textColor="@color/white"
-                android:textSize="18dp"
-                android:textStyle="bold" />
-        </com.balysv.materialripple.MaterialRippleLayout>
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:textStyle="bold" />
 
 
-        <com.balysv.materialripple.MaterialRippleLayout
-            style="@style/ripple_style"
+        <ImageButton
+            android:id="@+id/reminder_button"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageButton
-
-                android:id="@+id/tasbeeh"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="@drawable/card_view_button"
-                android:padding="15dp"
-                android:src="@drawable/tasbih"
-                android:text="تسبيح"
-                android:textColor="@color/white"
-                android:textSize="18dp"
-                android:textStyle="bold" />
-        </com.balysv.materialripple.MaterialRippleLayout>
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/card_view_button"
+            android:padding="15dp"
+            android:src="@drawable/alarm_clock"
+            android:text="تسبيح"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:textStyle="bold" />
 
 
+        <ImageButton
+            android:id="@+id/tasbeeh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:background="@drawable/card_view_button"
+            android:padding="15dp"
+            android:src="@drawable/tasbih"
+            android:text="تسبيح"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 </LinearLayout>

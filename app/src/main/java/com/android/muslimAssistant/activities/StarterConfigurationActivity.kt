@@ -16,6 +16,7 @@ import com.android.muslimAssistant.repository.SharedPreferencesRepository
 import com.android.muslimAssistant.utils.Wrapper
 import com.android.muslimAssistant.utils.methodsArabic
 import com.android.muslimAssistant.utils.methodsEnglish
+import com.android.muslimAssistant.utils.toast
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -26,7 +27,6 @@ import java.util.*
 class StarterConfigurationActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityStarterConfigurationBinding
-    var toast: Toast? = null
     private val methodsListWrapper by lazy { Wrapper<List<String>>(methodsEnglish) }
 
     private val sharedPreferencesRepository by lazy { SharedPreferencesRepository(this) }

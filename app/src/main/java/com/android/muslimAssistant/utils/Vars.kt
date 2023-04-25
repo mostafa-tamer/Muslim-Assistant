@@ -1,8 +1,13 @@
 package com.android.muslimAssistant.utils
 
+import android.widget.Toast
+
 
 const val dayInMillis: Int = 86400000
 const val separator: String = "=============================="
+
+var toast: Toast? = null
+
 
 val methodsEnglish = mutableListOf(
     "Shia Ithna-Ansari",

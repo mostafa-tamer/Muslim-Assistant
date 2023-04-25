@@ -39,7 +39,14 @@
     <string name="highest_dhikr">أعلى عدد من الذكر:</string>
     <string name="dhikrText">الذكر:</string>
     <string name="indicatorMax">أعلى قيمة للمؤشر</string>
-
+    <string name="doNotForgetMorningRemembrance">لا تنسَ أذكار الصباح</string>
+    <string name="doNotForgetEveningRemembrance">لا تنسَ أذكار المساء</string>
+    <string name="timeForPrayer">حان وقت الصلاة</string>
+    <string name="prayer">صلاة</string>
+    <string name="now">الآن</string>
+    <string name="reminder">تذكير</string>
+    <string name="applyAutoStartString">من فضلك فعل إذن التشغيل التلقائي للتطبيق حتى يعمل التطبيق بشكل صحيح عند اعادة تشغيل الهاتف</string>
+    <string name="doAutoStartManually">تعذر تفعيل اذن التشغيل التلقائي</string>
 </resources>
 
 

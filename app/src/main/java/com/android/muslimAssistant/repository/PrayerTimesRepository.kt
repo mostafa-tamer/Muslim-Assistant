@@ -47,11 +47,11 @@ class PrayerTimesRepository(
             val item = listOfPrayerTimes[searchIndex]
             PrayerTimes(
                 item.dateGregorian,
-                item.dateHigri,
+                item.dateHijri,
                 item.monthHijri,
                 item.fajr,
                 item.sunrise,
-                item.dhuhr,
+                item.dhuhur,
                 item.asr,
                 item.maghrib,
                 item.isha
@@ -70,6 +70,7 @@ class PrayerTimesRepository(
         val method = sharedPreferencesRepository.method.first()
 
         println("$latitude, $longitude, $method")
+
         val listOfPrayerTimes: List<Data> =
             getPrayerTimesData(latitude, longitude, method)
 
@@ -77,7 +78,7 @@ class PrayerTimesRepository(
             listOfPrayerTimes.map { data ->
                 PrayerTimes(
                     dateGregorian = data.date.gregorian.date,
-                    dateHigri = data.date.hijri.date,
+                    dateHijri = data.date.hijri.date,
                     monthHijri = if (sharedPreferencesRepository.language.first() == "en") {
                         data.date.hijri.month.en
                     } else {
@@ -85,7 +86,7 @@ class PrayerTimesRepository(
                     },
                     fajr = data.timings.Fajr,
                     sunrise = data.timings.Sunrise,
-                    dhuhr = data.timings.Dhuhr,
+                    dhuhur = data.timings.Dhuhr,
                     asr = data.timings.Asr,
                     maghrib = data.timings.Maghrib,
                     isha = data.timings.Isha

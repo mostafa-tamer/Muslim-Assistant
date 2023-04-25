@@ -5,8 +5,8 @@
     <data>
 
         <variable
-            name="homeViewModel"
-            type="com.android.muslimAssistant.fragments.prayerTimesFragment.PrayerTimesViewModel" />
+            name="prayerTimes"
+            type="com.android.muslimAssistant.database.PrayerTimes" />
     </data>
 
 
@@ -30,7 +30,7 @@
 
                     <TextView
                         android:id="@+id/monthHijri"
-                        text="@{homeViewModel.monthHijri}"
+                        text="@{prayerTimes.monthHijri}"
                         android:layout_marginLeft="10dp"
                         android:hint="@string/muharram"
                         android:textAlignment="viewStart"
@@ -40,7 +40,7 @@
                         android:textStyle="bold" />
                     <TextView
                         android:id="@+id/date"
-                        text="@{homeViewModel.dateHijri}"
+                        text="@{prayerTimes.dateHijri}"
                         android:layout_marginRight="10dp"
                         android:hint="01/01/0001"
                         android:textAlignment="viewEnd"
@@ -119,7 +119,7 @@
                             <TextView
                                 android:id="@+id/fajr"
                                 android:hint="00:00"
-                                android:text="@{homeViewModel.fajr}"
+                                android:text="@{prayerTimes.fajr}"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textColorHint="@color/white"
@@ -146,7 +146,7 @@
                             <TextView
                                 android:id="@+id/sunrise"
                                 android:hint="00:00"
-                                android:text="@{homeViewModel.sunrise}"
+                                android:text="@{prayerTimes.sunrise}"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textColorHint="@color/white"
@@ -173,7 +173,7 @@
                             <TextView
                                 android:id="@+id/dhuhr"
                                 android:hint="00:00"
-                                android:text="@{homeViewModel.dhuhur}"
+                                android:text="@{prayerTimes.dhuhur}"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textColorHint="@color/white"
@@ -199,7 +199,7 @@
                             <TextView
                                 android:id="@+id/asr"
                                 android:hint="00:00"
-                                android:text="@{homeViewModel.asr}"
+                                android:text="@{prayerTimes.asr}"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textColorHint="@color/white"
@@ -225,7 +225,7 @@
                             <TextView
                                 android:id="@+id/maghrib"
                                 android:hint="00:00"
-                                android:text="@{homeViewModel.maghrib}"
+                                android:text="@{prayerTimes.maghrib}"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textColorHint="@color/white"
@@ -250,7 +250,7 @@
                             <TextView
                                 android:id="@+id/isha"
                                 android:hint="00:00"
-                                android:text="@{homeViewModel.isha}"
+                                android:text="@{prayerTimes.isha}"
                                 android:textAlignment="center"
                                 android:textColor="@color/white"
                                 android:textColorHint="@color/white"
@@ -273,6 +273,7 @@
             android:layout_height="wrap_content"
             android:background="@color/antique_white"
             android:indeterminate="true"
+            android:visibility="gone"
             app:indicatorColor="@color/blue"
             app:trackThickness="6dp" />
     </FrameLayout>

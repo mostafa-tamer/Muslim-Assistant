@@ -1,10 +1,13 @@
 package com.android.muslimAssistant.fragments.tasbeehFragment
 
+import android.content.Context
 import android.os.Bundle
+import android.os.Vibrator
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.android.muslimAssistant.R
 import com.android.muslimAssistant.databinding.FragmentTasbeehBinding
@@ -27,6 +30,7 @@ class TasbeehFragment : Fragment() {
     ): View {
 
         binding = FragmentTasbeehBinding.inflate(layoutInflater)
+
 
         initializeUI()
         resetCounter()
@@ -84,6 +88,11 @@ class TasbeehFragment : Fragment() {
     }
 
     private fun checkIndicatorMax(counter: Int) {
+        if (counter == binding.progressBar.max) {
+            val vibrator = getSystemService(requireContext(), Vibrator::class.java) as Vibrator
+            vibrator.vibrate(200)
+        }
+
         if (counter >= binding.progressBar.max) {
             binding.progressBar.setIndicatorColor(
                 ContextCompat.getColor(

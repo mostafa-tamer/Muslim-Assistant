@@ -3,6 +3,9 @@ package com.android.muslimAssistant.fragments.prayerTimesFragment
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ComponentName
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.view.LayoutInflater
@@ -13,17 +16,23 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.android.muslimAssistant.R
 import com.android.muslimAssistant.Timing
 import com.android.muslimAssistant.database.PrayerTimes
-import com.android.muslimAssistant.notifications.AlarmHandler
-import com.android.muslimAssistant.utils.AlertDialogWrapper
-import com.android.muslimAssistant.utils.toastErrorMessageObserver
-import com.android.muslimAssistant.R
 import com.android.muslimAssistant.databinding.FragmentPrayerTimesBinding
+import com.android.muslimAssistant.notifications.AlarmHandler
+import com.android.muslimAssistant.repository.SharedPreferencesRepository
+import com.android.muslimAssistant.utils.AlertDialogWrapper
+import com.android.muslimAssistant.utils.toast
+import com.android.muslimAssistant.utils.toastErrorMessageObserver
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.koin.android.ext.android.get
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.util.*
 import kotlin.math.abs
@@ -37,7 +46,8 @@ class PrayerTimesFragment : Fragment() {
     private var todayPrayerTimes: PrayerTimes? = null
     private var tomorrowPrayerTimes: PrayerTimes? = null
 
-    private var toast: Toast? = null
+    private lateinit var alertDialogWrapper: AlertDialogWrapper.Builder
+    private val sharedPreferencesRepository: SharedPreferencesRepository by lazy { get() }
 
     private lateinit var warningAlertDialog: AlertDialogWrapper.Builder
 
@@ -53,7 +63,6 @@ class PrayerTimesFragment : Fragment() {
                 requestLocationService()
             } else {
                 println("Location is not granted")
-
                 warningAlertDialog.setTitle(getString(R.string.warning))
                     .setMessage(getString(R.string.locationPermissionRequest))
                     .setCancelable(false)
@@ -68,7 +77,7 @@ class PrayerTimesFragment : Fragment() {
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             println("User pressed Ok to enable location")
-            trackUserLocation()
+            run()
         } else {
             println(getString(R.string.LocationServiceIsNotGranted))
             warningAlertDialog.setTitle(getString(R.string.warning))
@@ -85,24 +94,70 @@ class PrayerTimesFragment : Fragment() {
     ): View {
         binding = FragmentPrayerTimesBinding.inflate(layoutInflater)
         binding.lifecycleOwner = this
-        binding.homeViewModel = viewModel
 
-        prayers = runBlocking { viewModel.retPrayerTimesSuspend() }
+//        assignPrayerTimes()
 
-        todayPrayerTimes = getPrayerTimesSelectedData(timing.getTodayDate())
-        tomorrowPrayerTimes = getPrayerTimesSelectedData(timing.getTomorrowDate())
-
+        alertDialogWrapper = AlertDialogWrapper.Builder(requireContext())
         warningAlertDialog = AlertDialogWrapper.Builder(requireContext())
 
-        observers()
-        listeners()
-
         checkPermissions()
-        updateUI()
-        schedulePrayerTimesNotifications()
-
 
         return binding.root
+    }
+
+
+    private fun handleAutoStart() {
+        if (isAutoStartEnabled())
+            return
+        alertDialogWrapper.setTitle(getString(R.string.warning))
+            .setMessage(getString(R.string.applyAutoStartString))
+            .setPositiveButton(getString(R.string.Ok)) {
+                lifecycleScope.launch {
+                    sharedPreferencesRepository.updateIsAutoStarted(true)
+                }
+                try {
+                    val intent = Intent()
+                    val manufacturer = Build.MANUFACTURER
+                    if ("xiaomi".equals(manufacturer, ignoreCase = true)) {
+                        intent.component = ComponentName(
+                            "com.miui.securitycenter",
+                            "com.miui.permcenter.autostart.AutoStartManagementActivity"
+                        )
+                    } else if ("oppo".equals(manufacturer, ignoreCase = true)) {
+                        intent.component = ComponentName(
+                            "com.coloros.safecenter",
+                            "com.coloros.safecenter.permission.startup.StartupAppListActivity"
+                        )
+                    } else if ("vivo".equals(manufacturer, ignoreCase = true)) {
+                        intent.component = ComponentName(
+                            "com.vivo.permissionmanager",
+                            "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"
+                        )
+                    } else if ("huawei".equals(manufacturer, ignoreCase = true)) {
+                        intent.component = ComponentName(
+                            "com.huawei.systemmanager",
+                            "com.huawei.systemmanager.optimize.process.ProtectActivity"
+                        )
+                    } else {
+                        toast?.cancel()
+                        toast = Toast.makeText(
+                            requireContext(),
+                            getString(R.string.doAutoStartManually),
+                            Toast.LENGTH_SHORT
+                        )
+                        toast?.show()
+                        return@setPositiveButton
+                    }
+                    startActivity(intent);
+                } catch (e: Exception) {
+                    println(e.message)
+                }
+            }.setNegativeButton(getString(R.string.cancel))
+            .showDialog()
+    }
+
+    private fun isAutoStartEnabled(): Boolean = runBlocking {
+        sharedPreferencesRepository.isAutoStarted.first()
     }
 
     private fun schedulePrayerTimesNotifications() {
@@ -122,7 +177,7 @@ class PrayerTimesFragment : Fragment() {
         val task: Task<LocationSettingsResponse> = client.checkLocationSettings(builder.build())
 
         task.addOnSuccessListener {
-            trackUserLocation()
+            run()
             println("Location is enabled")
         }.addOnFailureListener { exception ->
             if (exception is ResolvableApiException) {
@@ -154,7 +209,7 @@ class PrayerTimesFragment : Fragment() {
         todayPrayerTimes?.let {
             binding.fajrRow.setOnClickListener(createPrayerRowListener(it.fajr))
             binding.sunriseRow.setOnClickListener(createPrayerRowListener(it.sunrise))
-            binding.dhuhrRow.setOnClickListener(createPrayerRowListener(it.dhuhr))
+            binding.dhuhrRow.setOnClickListener(createPrayerRowListener(it.dhuhur))
             binding.asrRow.setOnClickListener(createPrayerRowListener(it.asr))
             binding.maghribRow.setOnClickListener(createPrayerRowListener(it.maghrib))
             binding.ishaRow.setOnClickListener(createPrayerRowListener(it.isha))
@@ -169,13 +224,13 @@ class PrayerTimesFragment : Fragment() {
             val remainingTimeInMillis = prayerTimeMillis - currentTimeMillis
             timing.convertMillisToHmUTC(
                 remainingTimeInMillis,
-                "H 'hrs and' m 'min remaining'"
+                getString(R.string.remainingTimeFormat)
             )
         } else {
             val remainingTimeInMillis = abs(prayerTimeMillis - currentTimeMillis)
             timing.convertMillisToHmUTC(
                 remainingTimeInMillis,
-                "H 'hrs and' mm 'min ago'"
+                getString(R.string.agoTimeFormat)
             )
         }
     }
@@ -193,8 +248,8 @@ class PrayerTimesFragment : Fragment() {
     private fun prayerTimesDatabaseObserver() {
         viewModel.retPrayerTimesLiveData().observe(viewLifecycleOwner) {
             prayers = it
-            todayPrayerTimes = getPrayerTimesSelectedData(timing.getTodayDate())
-            tomorrowPrayerTimes = getPrayerTimesSelectedData(timing.getTomorrowDate())
+            todayPrayerTimes = prayers.find { it.dateGregorian == timing.getTodayDate() }
+            tomorrowPrayerTimes = prayers.find { it.dateGregorian == timing.getTomorrowDate() }
 
             updateUI()
             schedulePrayerTimesNotifications()
@@ -246,21 +301,18 @@ class PrayerTimesFragment : Fragment() {
         )
     }
 
-    private fun getPrayerTimesSelectedData(
-        date: String
-    ): PrayerTimes? {
-        val searchIndex =
-            prayers.binarySearch { it.dateGregorian.compareTo(date) }
-        if (searchIndex >= 0) {
-            return prayers[searchIndex]
-        }
-        return null
-    }
-
     private fun updateUI() {
-        updatePrayerTimesContainer()
+        updatePrayerTimesInScreen()
         scheduleRemainingTimeTillNextPrayerTime()
         listeners()
+    }
+
+    private fun run() {
+        trackUserLocation()
+        schedulePrayerTimesNotifications()
+        observers()
+        handleAutoStart()
+        updateUI()
     }
 
     private fun scheduleRemainingTimeTillNextPrayerTime() {
@@ -273,16 +325,9 @@ class PrayerTimesFragment : Fragment() {
         )
     }
 
-    private fun updatePrayerTimesContainer() {
+    private fun updatePrayerTimesInScreen() {
         todayPrayerTimes?.let {
-            viewModel.dateHijri.value = it.dateHigri
-            viewModel.monthHijri.value = it.monthHijri
-            viewModel.fajr.value = timing.convertHmTo12HrsFormat(it.fajr)
-            viewModel.sunrise.value = timing.convertHmTo12HrsFormat(it.sunrise)
-            viewModel.dhuhur.value = timing.convertHmTo12HrsFormat(it.dhuhr)
-            viewModel.asr.value = timing.convertHmTo12HrsFormat(it.asr)
-            viewModel.maghrib.value = timing.convertHmTo12HrsFormat(it.maghrib)
-            viewModel.isha.value = timing.convertHmTo12HrsFormat(it.isha)
+            binding.prayerTimes = it
         }
     }
 
@@ -296,7 +341,7 @@ class PrayerTimesFragment : Fragment() {
         todayPrayerTimes?.let {
             val prayerTimesStrings = mapOf(
                 it.fajr to getString(R.string.fajr),
-                it.dhuhr to getString(R.string.dhuhur),
+                it.dhuhur to getString(R.string.dhuhur),
                 it.asr to getString(R.string.asr),
                 it.maghrib to getString(R.string.maghrib),
                 it.isha to getString(R.string.isha),

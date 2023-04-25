@@ -11,10 +11,8 @@ import android.content.Intent
 import android.widget.RemoteViews
 import com.android.muslimAssistant.activities.LauncherActivity
 import com.android.muslimAssistant.Timing
-import com.android.muslimAssistant.ChannelIDs
 import com.android.muslimAssistant.R
 import com.android.muslimAssistant.database.PrayerTimes
-import com.android.muslimAssistant.notifications.NotificationHelper
 import com.android.muslimAssistant.repository.PrayerTimesRepository
 import com.android.muslimAssistant.utils.dayInMillis
 import com.android.muslimAssistant.utils.requestCodeGenerator
@@ -118,7 +116,7 @@ class PrayerTimesWidget : AppWidgetProvider() {
                     R.id.sunrise,
                     timing.convertHmTo12HrsFormat(prayerTimes.sunrise)
                 )
-                views.setTextViewText(R.id.dhuhr, timing.convertHmTo12HrsFormat(prayerTimes.dhuhr))
+                views.setTextViewText(R.id.dhuhr, timing.convertHmTo12HrsFormat(prayerTimes.dhuhur))
                 views.setTextViewText(R.id.asr, timing.convertHmTo12HrsFormat(prayerTimes.asr))
                 views.setTextViewText(
                     R.id.maghrib,
@@ -135,12 +133,12 @@ class PrayerTimesWidget : AppWidgetProvider() {
         super.onReceive(context, intent)
         if (intent.getStringExtra("value") == "reset") {
             updateWidget(context)
-            NotificationHelper(
-                context,
-                ChannelIDs.PRIORITY_MAX.ID,
-                requestCodeGenerator(),
-                "Muslim Assistant Manager", "Widget is updated!"
-            ).startNotification()
+//            NotificationHelper(
+//                context,
+//                ChannelIDs.PRIORITY_MAX.ID,
+//                requestCodeGenerator(),
+//                "Muslim Assistant Manager", "Widget is updated!"
+//            ).startNotification()
         }
     }
 

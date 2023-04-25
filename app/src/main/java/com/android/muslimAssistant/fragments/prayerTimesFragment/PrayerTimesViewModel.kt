@@ -11,20 +11,11 @@ import java.io.IOException
 class PrayerTimesViewModel(
     private val repository: PrayerTimesRepository
 ) : ViewModel() {
-
     val errorMessageLiveData = MutableLiveData(ErrorMessage())
     val isLoadingPrayerTimes = MutableLiveData(false)
 
-    val dateHijri = MutableLiveData<String>()
-    val monthHijri = MutableLiveData<String>()
-    val fajr = MutableLiveData<String>()
-    val sunrise = MutableLiveData<String>()
-    val dhuhur = MutableLiveData<String>()
-    val asr = MutableLiveData<String>()
-    val maghrib = MutableLiveData<String>()
-    val isha = MutableLiveData<String>()
-
     suspend fun retPrayerTimesSuspend() = repository.retPrayerTimesSuspend()
+
     fun retPrayerTimesLiveData() = repository.retPrayerTimesLiveData()
 
     fun updateUserLocationAndPrayerTimes(latitude: Double, longitude: Double) {
@@ -46,6 +37,4 @@ class PrayerTimesViewModel(
             isLoadingPrayerTimes.value = false
         }
     }
-
-    fun retUser() = repository.retUser()
 }

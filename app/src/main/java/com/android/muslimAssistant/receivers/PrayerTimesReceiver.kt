@@ -9,6 +9,7 @@ import com.android.muslimAssistant.ChannelIDs
 import com.android.muslimAssistant.NotificationCodes
 import com.android.muslimAssistant.R
 import com.android.muslimAssistant.notifications.NotificationHelper
+import com.android.muslimAssistant.utils.updateLanguage
 import java.util.*
 
 class PrayerTimesReceiver : BroadcastReceiver() {
@@ -17,6 +18,7 @@ class PrayerTimesReceiver : BroadcastReceiver() {
     private lateinit var context: Context
 
     override fun onReceive(context: Context, intnet: Intent) {
+        updateLanguage(context)
 
         this.context = context
         value = intnet.getStringExtra("value").toString()
@@ -32,8 +34,8 @@ class PrayerTimesReceiver : BroadcastReceiver() {
                     context,
                     ChannelIDs.PRIORITY_MAX.ID,
                     NotificationCodes.Azkar.code,
-                    "أذكار الصباح",
-                    "لا تنسَ أذكار الصباح"
+                    context.getString(R.string.morningRemembrance),
+                    context.getString(R.string.doNotForgetMorningRemembrance)
                 ).startNotification()
             }
             "العصر" -> {
@@ -41,8 +43,8 @@ class PrayerTimesReceiver : BroadcastReceiver() {
                     context,
                     ChannelIDs.PRIORITY_MAX.ID,
                     NotificationCodes.Azkar.code,
-                    "أذكار المساء",
-                    "لا تنسَ أذكار المساء"
+                    context.getString(R.string.eveningRemembrance),
+                    context.getString(R.string.doNotForgetEveningRemembrance)
                 ).startNotification()
             }
         }
@@ -53,10 +55,15 @@ class PrayerTimesReceiver : BroadcastReceiver() {
             context,
             ChannelIDs.PRIORITY_MAX.ID,
             NotificationCodes.PrayerTimes.code,
-            "حان وقت الصلاة",
-            "صلاة $value الآن"
+            context.getString(R.string.timeForPrayer),
+            buildString {
+                append(context.getString(R.string.prayer))
+                append(" ")
+                append(value)
+                append(" ")
+                append(context.getString(R.string.now))
+            }
         ).startNotification()
-
 
         val soundPool = SoundPool.Builder()
             .setMaxStreams(3)
@@ -80,11 +87,5 @@ class PrayerTimesReceiver : BroadcastReceiver() {
                 }
             }, 10000
         )
-//        val mediaPlayer = MediaPlayer.create(context, R.raw.allahakbar)
-//        mediaPlayer.start()
-//
-//        mediaPlayer.setOnCompletionListener {
-//            mediaPlayer.release()
-//        }
     }
 }

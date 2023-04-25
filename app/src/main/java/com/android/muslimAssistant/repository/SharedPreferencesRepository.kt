@@ -18,6 +18,7 @@ class SharedPreferencesRepository(private val context: Context) {
     private val methodKey = stringPreferencesKey("method")
     private val languageKey = stringPreferencesKey("language")
     private val notificationKey = booleanPreferencesKey("isNotification")
+    private val isAutoStartedKey = booleanPreferencesKey("isAutoStarted")
 
     suspend fun updateLatLng(latitude: Double, longitude: Double) {
         context.dataStore.edit {
@@ -42,6 +43,16 @@ class SharedPreferencesRepository(private val context: Context) {
         context.dataStore.edit {
             it[languageKey] = lang
         }
+    }
+
+    suspend fun updateIsAutoStarted(isAutoStarted: Boolean) {
+        context.dataStore.edit {
+            it[isAutoStartedKey] = isAutoStarted
+        }
+    }
+
+    val isAutoStarted: Flow<Boolean> = context.dataStore.data.map { preferences ->
+        preferences[isAutoStartedKey] ?: false
     }
 
     val language: Flow<String> = context.dataStore.data.map { preferences ->

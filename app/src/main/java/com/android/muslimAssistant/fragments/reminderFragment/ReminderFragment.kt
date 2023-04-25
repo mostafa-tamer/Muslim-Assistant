@@ -180,7 +180,7 @@ class ReminderFragment : Fragment() {
     ): Wrapper<Int> {
         return if (checkedId == R.id.interval) {
             val seekBarBinding = SeekBarBinding.inflate(layoutInflater)
-            val progress = Wrapper(15)
+            val progress = Wrapper(20)
             binding.container.removeAllViews()
             binding.container.addView(seekBarBinding.root)
             handleSeekBar(seekBarBinding, progress)

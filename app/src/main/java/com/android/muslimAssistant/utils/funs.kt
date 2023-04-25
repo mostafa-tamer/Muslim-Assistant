@@ -9,6 +9,22 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import com.android.barcodeReader.utils.ErrorMessage
 import com.android.muslimAssistant.receivers.ReminderReceiver
+import com.android.muslimAssistant.repository.SharedPreferencesRepository
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import java.util.*
+
+fun updateLanguage(context: Context): String {
+    return runBlocking {
+        val language: String = SharedPreferencesRepository(context).language.first()
+        val locale = Locale(language)
+        Locale.setDefault(locale)
+        val config = context.resources.configuration
+        config.setLocale(locale)
+        context.resources.updateConfiguration(config, context.resources.displayMetrics)
+        language
+    }
+}
 
 
 fun cancelPendingIntent(code: Int, context: Context) {

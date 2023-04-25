@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.example.muslimsAssistant",
+  "applicationId": "com.android.muslimAssistant",
   "variantName": "release",
   "elements": [
     {

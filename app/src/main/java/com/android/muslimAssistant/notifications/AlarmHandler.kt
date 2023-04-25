@@ -4,10 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent.*
 import android.content.Context
 import android.content.Intent
-import com.android.muslimAssistant.Timing
-import com.android.muslimAssistant.PrayerTimesPendingIntentCodes
-import com.android.muslimAssistant.TodayPrayerTimesPendingIntentCodes
-import com.android.muslimAssistant.TomorrowPrayerTimesPendingIntentCodes
+import com.android.muslimAssistant.*
 import com.android.muslimAssistant.database.PrayerTimes
 import com.android.muslimAssistant.receivers.PrayerTimesReceiver
 import com.android.muslimAssistant.receivers.ReminderReceiver
@@ -214,27 +211,27 @@ class AlarmHandler(
         return mutableListOf(
             ScheduledPrayerTimes(
                 "${prayerTimes.dateGregorian} ${prayerTimes.fajr}",
-                "الفجر",
+                context.getString(R.string.fajr),
                 requestCode.fajr
             ),
             ScheduledPrayerTimes(
-                "${prayerTimes.dateGregorian} ${prayerTimes.dhuhr}",
-                "الظهر",
+                "${prayerTimes.dateGregorian} ${prayerTimes.dhuhur}",
+                context.getString(R.string.dhuhur),
                 requestCode.dhuhur
             ),
             ScheduledPrayerTimes(
                 "${prayerTimes.dateGregorian} ${prayerTimes.asr}",
-                "العصر",
+                context.getString(R.string.asr),
                 requestCode.asr
             ),
             ScheduledPrayerTimes(
                 "${prayerTimes.dateGregorian} ${prayerTimes.maghrib}",
-                "المغرب",
+                context.getString(R.string.maghrib),
                 requestCode.maghrib
             ),
             ScheduledPrayerTimes(
                 "${prayerTimes.dateGregorian} ${prayerTimes.isha}",
-                "العشاء",
+                context.getString(R.string.isha),
                 requestCode.isha
             )
         )

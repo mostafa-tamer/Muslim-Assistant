@@ -1,7 +1,8 @@
 package com.android.muslimAssistant.activities
 
+import android.content.ComponentName
 import android.content.Intent
-import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -18,14 +20,10 @@ import com.android.muslimAssistant.databinding.ActivityConfigurationBinding
 import com.android.muslimAssistant.databinding.MethodViewHolderBinding
 import com.android.muslimAssistant.repository.SharedPreferencesRepository
 import com.android.muslimAssistant.repository.TasbeehFragmentRepository
-import com.android.muslimAssistant.utils.Wrapper
-import com.android.muslimAssistant.utils.methodsArabic
-import com.android.muslimAssistant.utils.methodsEnglish
+import com.android.muslimAssistant.utils.*
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.koin.java.KoinJavaComponent
-import java.util.*
 
 class ConfigurationActivity : AppCompatActivity() {
 
@@ -69,6 +67,49 @@ class ConfigurationActivity : AppCompatActivity() {
         onBackPressedCallback()
         setContentView(binding.root)
         handleBackButton()
+    }
+
+    private fun handleAutoStart() {
+
+        try {
+            val intent = Intent()
+            val manufacturer = Build.MANUFACTURER
+            if ("xiaomi".equals(manufacturer, ignoreCase = true)) {
+                intent.component = ComponentName(
+                    "com.miui.securitycenter",
+                    "com.miui.permcenter.autostart.AutoStartManagementActivity"
+                )
+            } else if ("oppo".equals(manufacturer, ignoreCase = true)) {
+                intent.component = ComponentName(
+                    "com.coloros.safecenter",
+                    "com.coloros.safecenter.permission.startup.StartupAppListActivity"
+                )
+            } else if ("vivo".equals(manufacturer, ignoreCase = true)) {
+                intent.component = ComponentName(
+                    "com.vivo.permissionmanager",
+                    "com.vivo.permissionmanager.activity.BgStartUpManagerActivity"
+                )
+            } else if ("huawei".equals(manufacturer, ignoreCase = true)) {
+                intent.component = ComponentName(
+                    "com.huawei.systemmanager",
+                    "com.huawei.systemmanager.optimize.process.ProtectActivity"
+                )
+            } else {
+                toast?.cancel()
+                toast = Toast.makeText(
+                    this,
+                    getString(R.string.doAutoStartManually),
+                    Toast.LENGTH_SHORT
+                )
+                toast?.show()
+            }
+            lifecycleScope.launch {
+                sharedPreferencesRepository.updateIsAutoStarted(true)
+            }
+            startActivity(intent);
+        } catch (e: Exception) {
+            println(e.message)
+        }
     }
 
     private fun handleDhikr() {
@@ -166,28 +207,16 @@ class ConfigurationActivity : AppCompatActivity() {
     }
 
     private fun handelAppLanguage() {
-        val repository =
-            KoinJavaComponent.get<SharedPreferencesRepository>(SharedPreferencesRepository::class.java)
-        runBlocking {
-            val language: String = repository.language.first()
+        val language = updateLanguage(this)
+        binding =
+            ActivityConfigurationBinding.inflate(layoutInflater)
 
-            val locale = Locale(language)
-            val resources = resources
-            val configuration = resources.configuration
-            configuration.setLocale(locale)
-            val updatedResources = Resources(assets, resources.displayMetrics, configuration)
-            resources.updateConfiguration(configuration, updatedResources.displayMetrics)
-
-            binding =
-                ActivityConfigurationBinding.inflate(layoutInflater)
-
-            if (language == "ar") {
-                window.decorView.layoutDirection = View.LAYOUT_DIRECTION_RTL
-                binding.arabicRadio.isChecked = true
-            } else {
-                window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
-                binding.englishRadio.isChecked = true
-            }
+        if (language == "ar") {
+            window.decorView.layoutDirection = View.LAYOUT_DIRECTION_RTL
+            binding.arabicRadio.isChecked = true
+        } else {
+            window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
+            binding.englishRadio.isChecked = true
         }
     }
 

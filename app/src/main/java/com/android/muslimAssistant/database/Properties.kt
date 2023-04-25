@@ -7,11 +7,11 @@ import androidx.room.PrimaryKey
 data class PrayerTimes(
     @PrimaryKey
     val dateGregorian: String = "01-01-1970",
-    val dateHigri: String = "01-01-1970",
+    val dateHijri: String = "01-01-1970",
     val monthHijri: String = "Muharram",
     val fajr: String = "00:00:00",
     val sunrise: String = "00:00:00",
-    val dhuhr: String = "00:00:00",
+    val dhuhur: String = "00:00:00",
     val asr: String = "00:00:00",
     val maghrib: String = "00:00:00",
     val isha: String = "00:00:00",

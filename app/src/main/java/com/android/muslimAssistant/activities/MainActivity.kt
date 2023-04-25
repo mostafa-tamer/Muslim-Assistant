@@ -1,9 +1,9 @@
 package com.android.muslimAssistant.activities
 
+
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
-import android.content.res.Resources
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -13,11 +13,9 @@ import com.android.muslimAssistant.R
 import com.android.muslimAssistant.databinding.ActivityMainBinding
 import com.android.muslimAssistant.notifications.ChannelHelper
 import com.android.muslimAssistant.repository.SharedPreferencesRepository
+import com.android.muslimAssistant.utils.updateLanguage
 import com.android.muslimAssistant.widgets.PrayerTimesWidget
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
-import org.koin.java.KoinJavaComponent.get
-import java.util.*
+import org.koin.android.ext.android.get
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,19 +25,20 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
+
         run()
     }
 
-    override fun onStop() {
-        super.onStop()
-        finish()
+    override fun onRestart() {
+        super.onRestart()
+        updateLanguage(this)
     }
 
     private fun run() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        handelLanguage()
+        updateLanguage(this)
         handleToolBar()
         channelCreator()
         updateWidget()
@@ -50,19 +49,6 @@ class MainActivity : AppCompatActivity() {
         binding.toolbar.settingButton.setOnClickListener {
             startActivity(Intent(this, ConfigurationActivity::class.java))
             finish()
-        }
-    }
-
-    private fun handelLanguage() {
-        val repository = get<SharedPreferencesRepository>(SharedPreferencesRepository::class.java)
-        runBlocking {
-            val language: String = repository.language.first()
-            val locale = Locale(language)
-            val resources = resources
-            val configuration = resources.configuration
-            configuration.setLocale(locale)
-            val updatedResources = Resources(assets, resources.displayMetrics, configuration)
-            resources.updateConfiguration(configuration, updatedResources.displayMetrics)
         }
     }
 

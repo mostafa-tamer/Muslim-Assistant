@@ -13,7 +13,7 @@
     <string name="Ok">Ok</string>
     <string name="locationServiceRequest">You should enable location service to use get the prayer times</string>
     <string name="LocationServiceIsNotGranted">Location service is not granted</string>
-    <string name="remainingTime">Remaining time for prayer</string>
+    <string name="remainingTime">Remaining time for</string>
     <string name="eveningRemembrance">Evening Remembrance</string>
     <string name="morningRemembrance">Morning Remembrance</string>
     <string name="areYouSureYouWantToRemoveAllReminders">Are you sure you want to remove all reminders?</string>
@@ -39,4 +39,12 @@
     <string name="highest_dhikr">Highest dhikr:</string>
     <string name="dhikrText">Dhikr:</string>
     <string name="indicatorMax">Indicator max value</string>
+    <string name="doNotForgetMorningRemembrance">Do not forget morning remembrance</string>
+    <string name="doNotForgetEveningRemembrance">Do not forget evening remembrance</string>
+    <string name="timeForPrayer">Time for prayer</string>
+    <string name="prayer">Prayer</string>
+    <string name="now">now</string>
+    <string name="reminder">Reminder</string>
+    <string name="applyAutoStartString">Please apply auto start to let the app work properly when restarting the phone</string>
+    <string name="doAutoStartManually">Can not do auto start!</string>
 </resources>
