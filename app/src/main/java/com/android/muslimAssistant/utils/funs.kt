@@ -2,6 +2,7 @@ package com.android.muslimAssistant.utils
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.Toast
@@ -10,9 +11,22 @@ import androidx.lifecycle.MutableLiveData
 import com.android.barcodeReader.utils.ErrorMessage
 import com.android.muslimAssistant.receivers.ReminderReceiver
 import com.android.muslimAssistant.repository.SharedPreferencesRepository
+import com.android.muslimAssistant.widgets.PrayerTimesWidgetService
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import java.util.*
+
+
+fun startNewService(context: Context) {
+    val stoppedServiceIntent = Intent()
+    stoppedServiceIntent.component =
+        ComponentName(context, "com.android.muslimAssistant.widgets.PrayerTimesWidgetService")
+    context.stopService(stoppedServiceIntent)
+
+    val startedServiceIntent = Intent(context, PrayerTimesWidgetService::class.java)
+    context.startService(startedServiceIntent)
+}
+
 
 fun updateLanguage(context: Context): String {
     return runBlocking {

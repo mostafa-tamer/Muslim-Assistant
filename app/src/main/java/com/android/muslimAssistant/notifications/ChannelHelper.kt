@@ -5,10 +5,11 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 
-class ChannelHelper constructor(
+class ChannelHelper(
     private val context: Context,
     private val channelID: String,
     private val channelName: String,
+    private val priority: Int
 ) {
     init {
         createChannel()
@@ -17,8 +18,9 @@ class ChannelHelper constructor(
     private fun createChannel() {
         val channel =
             NotificationChannel(
-                channelID, channelName,
-                NotificationManager.IMPORTANCE_HIGH
+                channelID,
+                channelName,
+                priority,
             )
 
         channel.setShowBadge(true)

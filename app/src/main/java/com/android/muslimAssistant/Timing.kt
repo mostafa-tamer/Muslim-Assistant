@@ -69,6 +69,11 @@ class Timing {
         return simpleDateFormatHmAm.format(date)
     }
 
+    fun convertHmTo12HrsFormatCustomFormatter(time24: String,simpleDateFormat: SimpleDateFormat): String {
+        val date: Date = simpleDateFormatHm.parse(time24) ?: Date(0)
+        return simpleDateFormat.format(date)
+    }
+
     fun addOneDayToDmy(dateString: String): String {
         val date = simpleDateFormatDmy.parse(dateString) ?: return dateString
         val calendar = Calendar.getInstance().apply {

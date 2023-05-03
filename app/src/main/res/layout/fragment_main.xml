@@ -73,7 +73,7 @@
 
 
         <ImageButton
-            android:id="@+id/tasbeeh"
+            android:id="@+id/tasbeehButton"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"

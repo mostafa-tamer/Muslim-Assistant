@@ -34,11 +34,6 @@ class PrayerTimesRepository(
         sharedPreferencesRepository.updateLatLng(latitude, longitude)
     }
 
-    suspend fun updateMethod(context: Context, method: String) {
-        val sharedPreferencesRepository = SharedPreferencesRepository(context)
-        sharedPreferencesRepository.updateMethod(method)
-    }
-
     suspend fun retDayPrayerTimes(date: String): PrayerTimes {
         val listOfPrayerTimes = retPrayerTimesSuspend()
         val searchIndex =
@@ -128,6 +123,4 @@ class PrayerTimesRepository(
         }
         return prayerTimesForMonth
     }
-
-    fun retUser(): LiveData<List<LatLng>> = userDataSource.retUserLiveData()
 }

@@ -1,6 +1,5 @@
 package com.android.muslimAssistant.widgets
 
-import android.app.ActivityManager
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
@@ -9,15 +8,17 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import com.android.muslimAssistant.activities.LauncherActivity
-import com.android.muslimAssistant.Timing
 import com.android.muslimAssistant.R
+import com.android.muslimAssistant.Timing
+import com.android.muslimAssistant.activities.LauncherActivity
 import com.android.muslimAssistant.database.PrayerTimes
 import com.android.muslimAssistant.repository.PrayerTimesRepository
 import com.android.muslimAssistant.utils.dayInMillis
 import com.android.muslimAssistant.utils.requestCodeGenerator
+import com.android.muslimAssistant.utils.updateLanguage
 import kotlinx.coroutines.runBlocking
 import org.koin.java.KoinJavaComponent.get
+import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -35,25 +36,8 @@ class PrayerTimesWidget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-
         println("onUpdate")
-
-//        try {
-//            val stopIntent = Intent(context, PrayerTimesWidgetService::class.java)
-//            context.stopService(stopIntent)
-//            val startIntent = Intent(context, PrayerTimesWidgetService::class.java)
-//            context.startService(startIntent)
-//        } catch (e: Exception) {
-//            println(e.message)
-//            NotificationHelper(
-//                context,
-//                ChannelIDs.PRIORITY_MAX.ID,
-//                (System.currentTimeMillis() % getMaxInt).toInt(),
-//                "Muslim Assistant Manager",
-//                "Please open muslim assistant to let the widget work properly!"
-//            ).startNotification()
-//        }
-
+        updateLanguage(context)
 
         updateWidget(context)
 
@@ -62,17 +46,6 @@ class PrayerTimesWidget : AppWidgetProvider() {
         }
     }
 
-    private fun isForegroundServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
-        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        val runningServices = activityManager.getRunningServices(Int.MAX_VALUE)
-        for (service in runningServices) {
-            val componentName = service.service
-            if (componentName.className == serviceClass.name) {
-                return true
-            }
-        }
-        return false
-    }
 
 
     private fun handleWidgetClickListener(
@@ -80,20 +53,25 @@ class PrayerTimesWidget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int
     ) {
+        val intent = Intent(context, LauncherActivity::class.java)
         val pendingIntent: PendingIntent = PendingIntent.getActivity(
             context,
             requestCodeGenerator(),
-            Intent(context, LauncherActivity::class.java),
+            intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
         val views = RemoteViews(context.packageName, R.layout.prayer_times_widget)
+
         views.setOnClickPendingIntent(R.id.prayer_times_container, pendingIntent)
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }
 
     private fun updateWidget(context: Context) {
+
+        updateLanguage(context)
+
         val appWidgetManager = AppWidgetManager.getInstance(context)
         val appWidgetIds =
             appWidgetManager.getAppWidgetIds(ComponentName(context, PrayerTimesWidget::class.java))
@@ -111,18 +89,46 @@ class PrayerTimesWidget : AppWidgetProvider() {
                     context.packageName, R.layout.prayer_times_widget
                 )
 
-                views.setTextViewText(R.id.fajr, timing.convertHmTo12HrsFormat(prayerTimes.fajr))
+                views.setTextViewText(
+                    R.id.fajr, timing.convertHmTo12HrsFormatCustomFormatter(
+                        prayerTimes.fajr,
+                        SimpleDateFormat("h:mm\na", Locale.ENGLISH)
+                    )
+                )
+
                 views.setTextViewText(
                     R.id.sunrise,
-                    timing.convertHmTo12HrsFormat(prayerTimes.sunrise)
+                    timing.convertHmTo12HrsFormatCustomFormatter(
+                        prayerTimes.sunrise,
+                        SimpleDateFormat("h:mm\na", Locale.ENGLISH)
+                    )
                 )
-                views.setTextViewText(R.id.dhuhr, timing.convertHmTo12HrsFormat(prayerTimes.dhuhur))
-                views.setTextViewText(R.id.asr, timing.convertHmTo12HrsFormat(prayerTimes.asr))
+                views.setTextViewText(
+                    R.id.dhuhr, timing.convertHmTo12HrsFormatCustomFormatter(
+                        prayerTimes.dhuhur,
+                        SimpleDateFormat("h:mm\na", Locale.ENGLISH)
+                    )
+                )
+                views.setTextViewText(
+                    R.id.asr, timing.convertHmTo12HrsFormatCustomFormatter(
+                        prayerTimes.asr,
+                        SimpleDateFormat("h:mm\na", Locale.ENGLISH)
+                    )
+                )
                 views.setTextViewText(
                     R.id.maghrib,
-                    timing.convertHmTo12HrsFormat(prayerTimes.maghrib)
+                    timing.convertHmTo12HrsFormatCustomFormatter(
+                        prayerTimes.maghrib,
+                        SimpleDateFormat("h:mm\na", Locale.ENGLISH)
+                    )
                 )
-                views.setTextViewText(R.id.isha, timing.convertHmTo12HrsFormat(prayerTimes.isha))
+                views.setTextViewText(
+                    R.id.isha,
+                    timing.convertHmTo12HrsFormatCustomFormatter(
+                        prayerTimes.isha,
+                        SimpleDateFormat("h:mm\na", Locale.ENGLISH)
+                    )
+                )
                 appWidgetManager.updateAppWidget(appWidgetId, views)
             }
             prayerTimes

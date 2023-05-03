@@ -3,7 +3,6 @@ package com.android.muslimAssistant.koin
 
 import androidx.room.Room
 import com.android.muslimAssistant.database.Database
-import com.android.muslimAssistant.fragments.mainFragment.MainFragmentViewModel
 import com.android.muslimAssistant.fragments.prayerTimesFragment.PrayerTimesViewModel
 import com.android.muslimAssistant.fragments.reminderFragment.ReminderViewModel
 import com.android.muslimAssistant.network.ApiService
@@ -27,9 +26,6 @@ val viewModelsModule = module {
     }
     viewModel {
         ReminderViewModel(remindersRepository = get())
-    }
-    viewModel {
-        MainFragmentViewModel(sharedPreferencesRepository = get())
     }
 }
 

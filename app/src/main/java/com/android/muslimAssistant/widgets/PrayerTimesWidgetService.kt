@@ -1,18 +1,15 @@
 package com.android.muslimAssistant.widgets
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.Service
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Intent
-import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
-import com.android.muslimAssistant.Timing
+import com.android.muslimAssistant.ChannelIDs
 import com.android.muslimAssistant.R
+import com.android.muslimAssistant.Timing
 import com.android.muslimAssistant.database.PrayerTimes
+import com.android.muslimAssistant.notifications.mainActivityPendingIntent
 import com.android.muslimAssistant.repository.PrayerTimesRepository
+import com.android.muslimAssistant.utils.updateLanguage
 import kotlinx.coroutines.runBlocking
 import org.koin.java.KoinJavaComponent
 import java.util.*
@@ -22,16 +19,9 @@ class PrayerTimesWidgetService : Service() {
     private val timing by lazy { Timing() }
     override fun onBind(intent: Intent?) = null
 
-    override fun onCreate() {
-        super.onCreate()
-        try {
-            startForeground(1, createNotification())
-        } catch (e: java.lang.Exception) {
-            println(e.message)
-        }
-    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        updateLanguage(this@PrayerTimesWidgetService)
 
         val prayerTimes: List<PrayerTimes> = runBlocking {
             val prayerTimesRepository =
@@ -39,36 +29,32 @@ class PrayerTimesWidgetService : Service() {
             prayerTimesRepository.retPrayerTimesSuspend()
         }
 
-        val appWidgetManager =
-            AppWidgetManager.getInstance(this@PrayerTimesWidgetService)
-        val appWidgetIds =
-            appWidgetManager.getAppWidgetIds(
-                ComponentName(
-                    this@PrayerTimesWidgetService,
-                    PrayerTimesWidget::class.java
-                )
-            )
+        val notificationBuilder =
+            NotificationCompat.Builder(this@PrayerTimesWidgetService, ChannelIDs.PRIORITY_MIN.ID)
+                .setContentTitle(this@PrayerTimesWidgetService.getString(R.string.app_name))
+                .setSmallIcon(R.drawable.pray)
+                .setContentText(setRemainingTime(prayerTimes))
+                .setContentIntent(mainActivityPendingIntent(this@PrayerTimesWidgetService))
+                .setPriority(NotificationCompat.PRIORITY_MIN)
+                .setAutoCancel(true)
+
 
         timer.schedule(
             object : TimerTask() {
                 override fun run() {
-
                     println("service $startId is running")
-                    appWidgetIds.forEach { appWidgetId ->
-                        val views = RemoteViews(
-                            packageName, R.layout.prayer_times_widget
-                        )
-                        views.setTextViewText(
-                            R.id.remaining_time_widget,
-                            setRemainingTime(prayerTimes)
-                        )
-                        appWidgetManager.updateAppWidget(appWidgetId, views)
+                    notificationBuilder.setContentText(setRemainingTime(prayerTimes))
+                    try {
+                        startForeground(1, notificationBuilder.build())
+                    } catch (e: java.lang.Exception) {
+                        println(e.message)
                     }
                 }
             },
             0,
             1000
         )
+
         return START_STICKY
     }
 
@@ -91,72 +77,57 @@ class PrayerTimesWidgetService : Service() {
     }
 
     private fun setRemainingTime(prayerTimesList: List<PrayerTimes>): String {
-        val todayPrayerTimes = getPrayerTimesSelectedData(
+        val currentTimeMillis = System.currentTimeMillis()
+
+        // Check remaining time for today's prayers
+        getPrayerTimesSelectedData(
             prayerTimesList,
             timing.getTodayDate()
-        )
-
-        if (todayPrayerTimes != null) {
+        )?.let { todayPrayerTimes ->
             val prayerTimesStrings = mapOf(
-                todayPrayerTimes.fajr to "الفجر",
-                todayPrayerTimes.dhuhur to "الظهر",
-                todayPrayerTimes.asr to "العصر",
-                todayPrayerTimes.maghrib to "المغرب",
-                todayPrayerTimes.isha to "العشاء",
+                todayPrayerTimes.fajr to this@PrayerTimesWidgetService.getString(R.string.fajr),
+                todayPrayerTimes.dhuhur to this@PrayerTimesWidgetService.getString(R.string.dhuhur),
+                todayPrayerTimes.asr to this@PrayerTimesWidgetService.getString(R.string.asr),
+                todayPrayerTimes.maghrib to this@PrayerTimesWidgetService.getString(R.string.maghrib),
+                todayPrayerTimes.isha to this@PrayerTimesWidgetService.getString(R.string.isha)
             )
-            for (i in prayerTimesStrings) {
-
+            prayerTimesStrings.forEach { (prayerTime, prayerName) ->
                 val prayerTimeMillis =
-                    timing.convertDmyHmToMillis("${timing.getTodayDate()} ${i.key}")
-
-                val currentTimeMillis = System.currentTimeMillis()
-
+                    timing.convertDmyHmToMillis("${timing.getTodayDate()} $prayerTime")
                 if (currentTimeMillis < prayerTimeMillis) {
-
                     val remainingTimeInMillis = prayerTimeMillis - currentTimeMillis
-                    val remainingTimeString = timing.convertMillisToHMS(
-                        remainingTimeInMillis,
-                        "HH:mm:ss"
-                    )
-                    return "الوقت المتبقي على صلاة ${i.value}" + "\n" + remainingTimeString
+                    val remainingTimeString =
+                        timing.convertMillisToHMS(remainingTimeInMillis, "HH:mm:ss")
+                    return buildString {
+                        append(this@PrayerTimesWidgetService.getString(R.string.remainingTime))
+                        append(" ")
+                        append(prayerName)
+                        append("\n")
+                        append(remainingTimeString)
+                    }
                 }
             }
         }
 
-        val tomorrowPrayerTimes = getPrayerTimesSelectedData(
+        // Check remaining time for tomorrow's Fajr prayer
+        getPrayerTimesSelectedData(
             prayerTimesList,
             timing.getTomorrowDate()
-        )
-
-        if (tomorrowPrayerTimes != null) {
+        )?.let { tomorrowPrayerTimes ->
             val tomorrowFajrTimeMillis =
                 timing.convertDmyHmToMillis("${timing.getTomorrowDate()} ${tomorrowPrayerTimes.fajr}")
-            val currentTimeMillis = System.currentTimeMillis()
-
             if (currentTimeMillis < tomorrowFajrTimeMillis) {
                 val remainingTimeInMillis = tomorrowFajrTimeMillis - currentTimeMillis
-                val remainingTimeString = timing.convertMillisToHMS(
-                    remainingTimeInMillis,
-                    "HH:mm:ss"
-                )
-                return "الوقت المتبقي على صلاة الفجر\n$remainingTimeString"
+                val remainingTimeString =
+                    timing.convertMillisToHMS(remainingTimeInMillis, "HH:mm:ss")
+                return buildString {
+                    append(this@PrayerTimesWidgetService.getString(R.string.time_remaining_to_fajr_prayer))
+                    append("\n")
+                    append(remainingTimeString)
+                }
             }
         }
-        return ""
-    }
 
-
-    private fun createNotification(): Notification {
-        val channelId = "time_remaining_service"
-        val channel =
-            NotificationChannel(channelId, "WidgetChannel", NotificationManager.IMPORTANCE_LOW)
-        val service = getSystemService(NotificationManager::class.java)
-        service.createNotificationChannel(channel)
-
-        return NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Muslim Assistant")
-            .setContentText("Running in the background")
-            .setSmallIcon(R.drawable.pray)
-            .build()
+        return String()
     }
 }

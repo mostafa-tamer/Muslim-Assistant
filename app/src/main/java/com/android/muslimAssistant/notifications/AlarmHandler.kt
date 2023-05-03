@@ -4,7 +4,10 @@ import android.app.AlarmManager
 import android.app.PendingIntent.*
 import android.content.Context
 import android.content.Intent
-import com.android.muslimAssistant.*
+import com.android.muslimAssistant.PrayerTimesPendingIntentCodes
+import com.android.muslimAssistant.Timing
+import com.android.muslimAssistant.TodayPrayerTimesPendingIntentCodes
+import com.android.muslimAssistant.TomorrowPrayerTimesPendingIntentCodes
 import com.android.muslimAssistant.database.PrayerTimes
 import com.android.muslimAssistant.receivers.PrayerTimesReceiver
 import com.android.muslimAssistant.receivers.ReminderReceiver
@@ -131,7 +134,7 @@ class AlarmHandler(
         }
     }
 
-    private fun <T> generateAlarmExactTime(
+     fun <T> generateAlarmExactTime(
         context: Context,
         dateTimeInMillis: Long,
         value: String,
@@ -185,7 +188,7 @@ class AlarmHandler(
                 generateAlarmExactTime(
                     context,
                     prayerTimeInMillis,
-                    i.name,
+                    i.name.toString(),
                     i.requestCode,
                     PrayerTimesReceiver::class.java
                 )
@@ -197,7 +200,7 @@ class AlarmHandler(
             generateAlarmExactTime(
                 context,
                 prayerTimeInMillis,
-                i.name,
+                i.name.toString(),
                 i.requestCode,
                 PrayerTimesReceiver::class.java
             )
@@ -211,27 +214,27 @@ class AlarmHandler(
         return mutableListOf(
             ScheduledPrayerTimes(
                 "${prayerTimes.dateGregorian} ${prayerTimes.fajr}",
-                context.getString(R.string.fajr),
+                1,
                 requestCode.fajr
             ),
             ScheduledPrayerTimes(
                 "${prayerTimes.dateGregorian} ${prayerTimes.dhuhur}",
-                context.getString(R.string.dhuhur),
+                2,
                 requestCode.dhuhur
             ),
             ScheduledPrayerTimes(
                 "${prayerTimes.dateGregorian} ${prayerTimes.asr}",
-                context.getString(R.string.asr),
+                3,
                 requestCode.asr
             ),
             ScheduledPrayerTimes(
                 "${prayerTimes.dateGregorian} ${prayerTimes.maghrib}",
-                context.getString(R.string.maghrib),
+                4,
                 requestCode.maghrib
             ),
             ScheduledPrayerTimes(
                 "${prayerTimes.dateGregorian} ${prayerTimes.isha}",
-                context.getString(R.string.isha),
+                5,
                 requestCode.isha
             )
         )

@@ -6,15 +6,15 @@ import androidx.room.PrimaryKey
 @Entity
 data class PrayerTimes(
     @PrimaryKey
-    val dateGregorian: String = "01-01-1970",
-    val dateHijri: String = "01-01-1970",
-    val monthHijri: String = "Muharram",
-    val fajr: String = "00:00:00",
-    val sunrise: String = "00:00:00",
-    val dhuhur: String = "00:00:00",
-    val asr: String = "00:00:00",
-    val maghrib: String = "00:00:00",
-    val isha: String = "00:00:00",
+    var dateGregorian: String = "01-01-1970",
+    var dateHijri: String = "01-01-1970",
+    var monthHijri: String = "Muharram",
+    var fajr: String = "00:00:00",
+    var sunrise: String = "00:00:00",
+    var dhuhur: String = "00:00:00",
+    var asr: String = "00:00:00",
+    var maghrib: String = "00:00:00",
+    var isha: String = "00:00:00",
 )
 
 @Entity

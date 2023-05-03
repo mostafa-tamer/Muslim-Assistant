@@ -11,12 +11,17 @@ class ViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
     override fun getItemCount() = 4
 
+    private val azkarFragment = AzkarFragment()
+    private val prayerTimesFragment = PrayerTimesFragment()
+    private val reminderFragment = ReminderFragment()
+    private val tasbeehFragment = TasbeehFragment()
+
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> return AzkarFragment()
-            1 -> return PrayerTimesFragment()
-            2 -> return ReminderFragment()
-            else -> TasbeehFragment()
+            0 -> return azkarFragment
+            1 -> return prayerTimesFragment
+            2 -> return reminderFragment
+            else -> tasbeehFragment
         }
     }
 }

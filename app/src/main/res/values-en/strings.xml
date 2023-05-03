@@ -47,4 +47,7 @@
     <string name="reminder">Reminder</string>
     <string name="applyAutoStartString">Please apply auto start to let the app work properly when restarting the phone</string>
     <string name="doAutoStartManually">Can not do auto start!</string>
+    <string name="remainingTimeFormat">H \'hrs and\' m \'min remaining\'</string>
+    <string name="agoTimeFormat">H \'hrs and\' mm \'min ago\'</string>
+    <string name="clear_notifications">Clear notifications</string>
 </resources>

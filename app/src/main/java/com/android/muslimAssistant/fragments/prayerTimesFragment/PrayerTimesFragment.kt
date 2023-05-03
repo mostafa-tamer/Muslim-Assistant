@@ -3,6 +3,7 @@ package com.android.muslimAssistant.fragments.prayerTimesFragment
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Build
@@ -26,6 +27,7 @@ import com.android.muslimAssistant.repository.SharedPreferencesRepository
 import com.android.muslimAssistant.utils.AlertDialogWrapper
 import com.android.muslimAssistant.utils.toast
 import com.android.muslimAssistant.utils.toastErrorMessageObserver
+import com.android.muslimAssistant.widgets.PrayerTimesWidget
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
@@ -93,9 +95,6 @@ class PrayerTimesFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         binding = FragmentPrayerTimesBinding.inflate(layoutInflater)
-        binding.lifecycleOwner = this
-
-//        assignPrayerTimes()
 
         alertDialogWrapper = AlertDialogWrapper.Builder(requireContext())
         warningAlertDialog = AlertDialogWrapper.Builder(requireContext())
@@ -162,6 +161,14 @@ class PrayerTimesFragment : Fragment() {
 
     private fun schedulePrayerTimesNotifications() {
         AlarmHandler(requireContext()).scheduleAlarms()
+    }
+
+    private fun updateWidget() {
+        val appWidgetManager = AppWidgetManager.getInstance(requireContext())
+        val componentName = ComponentName(requireContext(), PrayerTimesWidget::class.java)
+        val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
+        val widget = PrayerTimesWidget()
+        widget.onUpdate(requireContext(), appWidgetManager, appWidgetIds)
     }
 
     private fun requestLocationService() {
@@ -308,11 +315,13 @@ class PrayerTimesFragment : Fragment() {
     }
 
     private fun run() {
+
         trackUserLocation()
         schedulePrayerTimesNotifications()
         observers()
         handleAutoStart()
         updateUI()
+        updateWidget()
     }
 
     private fun scheduleRemainingTimeTillNextPrayerTime() {
@@ -327,7 +336,17 @@ class PrayerTimesFragment : Fragment() {
 
     private fun updatePrayerTimesInScreen() {
         todayPrayerTimes?.let {
-            binding.prayerTimes = it
+            binding.prayerTimes = PrayerTimes(
+                it.dateGregorian,
+                it.dateHijri,
+                it.monthHijri,
+                timing.convertHmTo12HrsFormat(it.fajr),
+                timing.convertHmTo12HrsFormat(it.sunrise),
+                timing.convertHmTo12HrsFormat(it.dhuhur),
+                timing.convertHmTo12HrsFormat(it.asr),
+                timing.convertHmTo12HrsFormat(it.maghrib),
+                timing.convertHmTo12HrsFormat(it.isha)
+            )
         }
     }
 
@@ -337,7 +356,7 @@ class PrayerTimesFragment : Fragment() {
     }
 
     private fun setRemainingTime() {
-        var foundToday = false
+
         todayPrayerTimes?.let {
             val prayerTimesStrings = mapOf(
                 it.fajr to getString(R.string.fajr),

@@ -6,9 +6,9 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.android.muslimAssistant.activities.MainActivity
 import com.android.muslimAssistant.PendingIntentCodes
 import com.android.muslimAssistant.R
+import com.android.muslimAssistant.activities.MainActivity
 import com.android.muslimAssistant.receivers.NotificationActionReceiver
 import com.android.muslimAssistant.repository.SharedPreferencesRepository
 import com.android.muslimAssistant.utils.requestCodeGenerator
@@ -23,17 +23,16 @@ class NotificationHelper(
     private val context: Context,
     private val channelID: String,
     private val notificationID: Int,
-    private val notificationTitle: String,
-    private val notificationText: String
+    private val notificationTitle: String = "",
+    private val notificationText: String = ""
 ) {
+    private val notificationManagerCompat = NotificationManagerCompat.from(context)
+
     private fun setupClickToBackToApplicationIntent(): PendingIntent {
-
-        val intent = Intent(context, MainActivity::class.java)
-
         return PendingIntent.getActivity(
             context,
             PendingIntentCodes.SET_CONTENT_INTENT.code,
-            intent,
+            Intent(context, MainActivity::class.java),
             PendingIntent.FLAG_IMMUTABLE
         )
     }
@@ -44,6 +43,7 @@ class NotificationHelper(
             .setSmallIcon(R.drawable.pray)
             .setContentText(notificationText)
             .setContentIntent(setupClickToBackToApplicationIntent())
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .addAction(
                 R.drawable.pray,
@@ -58,15 +58,57 @@ class NotificationHelper(
             .build()
     }
 
-    fun startNotification() {
-        val sharedPreferencesRepository =
-            get<SharedPreferencesRepository>(SharedPreferencesRepository::class.java)
-        CoroutineScope(Dispatchers.IO).launch {
-            if (sharedPreferencesRepository.isNotification.first()) {
-                val notificationManagerCompat = NotificationManagerCompat.from(context)
-                notificationManagerCompat.notify(notificationID, notificationCreator())
-            }
-            this.cancel()
+//    fun startNotification() {
+//        val sharedPreferencesRepository =
+//            get<SharedPreferencesRepository>(SharedPreferencesRepository::class.java)
+//        CoroutineScope(Dispatchers.IO).launch {
+//            if (sharedPreferencesRepository.isNotification.first()) {
+//                notificationManagerCompat.notify(notificationID, notificationCreator())
+//            }
+//            this.cancel()
+//        }
+//    }
+//
+//    fun changeContentInterval(remainingTime: String) {
+//        notificationManagerCompat.setContentText(notificationText)
+//        notificationManagerCompat.notify(notificationId, notificationCreator())
+//    }
+}
+
+private fun notificationManagerCompat(context: Context): NotificationManagerCompat {
+    return NotificationManagerCompat.from(context)
+}
+
+fun cancelNotificationPendingIntent(context: Context): PendingIntent {
+    return PendingIntent.getBroadcast(
+        context,
+        requestCodeGenerator(),
+        Intent(context, NotificationActionReceiver::class.java),
+        PendingIntent.FLAG_IMMUTABLE
+    )
+}
+
+fun mainActivityPendingIntent(context: Context): PendingIntent {
+    return PendingIntent.getActivity(
+        context,
+        PendingIntentCodes.SET_CONTENT_INTENT.code,
+        Intent(context, MainActivity::class.java),
+        PendingIntent.FLAG_IMMUTABLE
+    )
+}
+
+
+fun pushNotification(
+    context: Context,
+    notificationBuilder: NotificationCompat.Builder,
+    notificationID: Int
+) {
+    val sharedPreferencesRepository =
+        get<SharedPreferencesRepository>(SharedPreferencesRepository::class.java)
+    CoroutineScope(Dispatchers.IO).launch {
+        if (sharedPreferencesRepository.isNotification.first()) {
+            notificationManagerCompat(context).notify(notificationID, notificationBuilder.build())
         }
+        this.cancel()
     }
 }

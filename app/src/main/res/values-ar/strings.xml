@@ -47,6 +47,9 @@
     <string name="reminder">تذكير</string>
     <string name="applyAutoStartString">من فضلك فعل إذن التشغيل التلقائي للتطبيق حتى يعمل التطبيق بشكل صحيح عند اعادة تشغيل الهاتف</string>
     <string name="doAutoStartManually">تعذر تفعيل اذن التشغيل التلقائي</string>
+    <string name="remainingTimeFormat">H \'ساعة و\' m \'دقيقة متبقية\'</string>
+    <string name="agoTimeFormat">منذ H \'ساعة و\' mm \'دقيقة\'</string>
+    <string name="clear_notifications">مسح الاشعارات</string>
 </resources>
 
 

@@ -21,17 +21,21 @@
         tools:layout="@layout/fragment_main">
         <action
             android:id="@+id/action_mainFragment2_to_prayerTimesFragment"
-            app:destination="@id/prayerTimesFragment" />
+            app:destination="@id/prayerTimesFragment"
+            app:enterAnim="@anim/fade_in" />
         <action
             android:id="@+id/action_mainFragment2_to_azkarFragment"
-            app:destination="@id/azkarFragment" />
+            app:destination="@id/azkarFragment"
+            app:enterAnim="@anim/fade_in" />
 
         <action
             android:id="@+id/action_mainFragment_to_tasbeehFragment"
-            app:destination="@id/tasbeehFragment" />
+            app:destination="@id/tasbeehFragment"
+            app:enterAnim="@anim/fade_in" />
         <action
             android:id="@+id/action_mainFragment_to_reminderFragment"
-            app:destination="@id/reminderFragment" />
+            app:destination="@id/reminderFragment"
+            app:enterAnim="@anim/fade_in" />
 
     </fragment>
     <fragment
