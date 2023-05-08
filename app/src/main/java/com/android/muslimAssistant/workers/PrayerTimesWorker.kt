@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.android.muslimAssistant.notifications.AlarmHandler
+import com.android.muslimAssistant.utils.startNewService
 
 
 class PrayerTimesWorker(
@@ -19,6 +20,9 @@ class PrayerTimesWorker(
         return try {
             val alarmHandler = AlarmHandler(applicationContext)
             alarmHandler.scheduleAlarms()
+
+            startNewService(applicationContext)
+
             Result.success()
         } catch (e: Exception) {
 

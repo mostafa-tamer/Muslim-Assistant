@@ -77,7 +77,7 @@
         <receiver android:name="com.android.muslimAssistant.receivers.ReminderReceiver" />
 
         <service
-            android:name="com.android.muslimAssistant.widgets.PrayerTimesWidgetService"
+            android:name="com.android.muslimAssistant.services.NotificationRemainingTimeService"
             android:enabled="true"
             android:foregroundServiceType="dataSync" />
 

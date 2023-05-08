@@ -8,13 +8,11 @@ import androidx.core.app.NotificationCompat
 import com.android.muslimAssistant.ChannelIDs
 import com.android.muslimAssistant.NotificationCodes
 import com.android.muslimAssistant.R
-import com.android.muslimAssistant.activities.MainActivity
 import com.android.muslimAssistant.notifications.cancelNotificationPendingIntent
 import com.android.muslimAssistant.notifications.mainActivityPendingIntent
 import com.android.muslimAssistant.notifications.pushNotification
 import com.android.muslimAssistant.utils.startNewService
 import com.android.muslimAssistant.utils.updateLanguage
-import com.android.muslimAssistant.widgets.PrayerTimesWidgetService
 import java.lang.Thread.sleep
 import java.util.*
 

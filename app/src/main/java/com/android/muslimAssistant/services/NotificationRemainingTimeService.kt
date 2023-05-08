@@ -1,4 +1,4 @@
-package com.android.muslimAssistant.widgets
+package com.android.muslimAssistant.services
 
 import android.app.Service
 import android.content.Intent
@@ -14,15 +14,25 @@ import kotlinx.coroutines.runBlocking
 import org.koin.java.KoinJavaComponent
 import java.util.*
 
-class PrayerTimesWidgetService : Service() {
+class NotificationRemainingTimeService : Service() {
     private val timer = Timer()
     private val timing by lazy { Timing() }
     override fun onBind(intent: Intent?) = null
 
+    override fun onCreate() {
+        super.onCreate()
+        updateNotification(0)
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        updateLanguage(this@PrayerTimesWidgetService)
+        updateLanguage(this@NotificationRemainingTimeService)
 
+        updateNotification(startId)
+
+        return START_STICKY
+    }
+
+    private fun updateNotification(startId: Int) {
         val prayerTimes: List<PrayerTimes> = runBlocking {
             val prayerTimesRepository =
                 KoinJavaComponent.get<PrayerTimesRepository>(PrayerTimesRepository::class.java)
@@ -30,11 +40,11 @@ class PrayerTimesWidgetService : Service() {
         }
 
         val notificationBuilder =
-            NotificationCompat.Builder(this@PrayerTimesWidgetService, ChannelIDs.PRIORITY_MIN.ID)
-                .setContentTitle(this@PrayerTimesWidgetService.getString(R.string.app_name))
+            NotificationCompat.Builder(this@NotificationRemainingTimeService, ChannelIDs.PRIORITY_MIN.ID)
+                .setContentTitle(this@NotificationRemainingTimeService.getString(R.string.app_name))
                 .setSmallIcon(R.drawable.pray)
                 .setContentText(setRemainingTime(prayerTimes))
-                .setContentIntent(mainActivityPendingIntent(this@PrayerTimesWidgetService))
+                .setContentIntent(mainActivityPendingIntent(this@NotificationRemainingTimeService))
                 .setPriority(NotificationCompat.PRIORITY_MIN)
                 .setAutoCancel(true)
 
@@ -46,7 +56,7 @@ class PrayerTimesWidgetService : Service() {
                     notificationBuilder.setContentText(setRemainingTime(prayerTimes))
                     try {
                         startForeground(1, notificationBuilder.build())
-                    } catch (e: java.lang.Exception) {
+                    } catch (e: Exception) {
                         println(e.message)
                     }
                 }
@@ -54,8 +64,6 @@ class PrayerTimesWidgetService : Service() {
             0,
             1000
         )
-
-        return START_STICKY
     }
 
 
@@ -85,11 +93,11 @@ class PrayerTimesWidgetService : Service() {
             timing.getTodayDate()
         )?.let { todayPrayerTimes ->
             val prayerTimesStrings = mapOf(
-                todayPrayerTimes.fajr to this@PrayerTimesWidgetService.getString(R.string.fajr),
-                todayPrayerTimes.dhuhur to this@PrayerTimesWidgetService.getString(R.string.dhuhur),
-                todayPrayerTimes.asr to this@PrayerTimesWidgetService.getString(R.string.asr),
-                todayPrayerTimes.maghrib to this@PrayerTimesWidgetService.getString(R.string.maghrib),
-                todayPrayerTimes.isha to this@PrayerTimesWidgetService.getString(R.string.isha)
+                todayPrayerTimes.fajr to this@NotificationRemainingTimeService.getString(R.string.fajr),
+                todayPrayerTimes.dhuhur to this@NotificationRemainingTimeService.getString(R.string.dhuhur),
+                todayPrayerTimes.asr to this@NotificationRemainingTimeService.getString(R.string.asr),
+                todayPrayerTimes.maghrib to this@NotificationRemainingTimeService.getString(R.string.maghrib),
+                todayPrayerTimes.isha to this@NotificationRemainingTimeService.getString(R.string.isha)
             )
             prayerTimesStrings.forEach { (prayerTime, prayerName) ->
                 val prayerTimeMillis =
@@ -99,7 +107,7 @@ class PrayerTimesWidgetService : Service() {
                     val remainingTimeString =
                         timing.convertMillisToHMS(remainingTimeInMillis, "HH:mm:ss")
                     return buildString {
-                        append(this@PrayerTimesWidgetService.getString(R.string.remainingTime))
+                        append(this@NotificationRemainingTimeService.getString(R.string.remainingTime))
                         append(" ")
                         append(prayerName)
                         append("\n")
@@ -121,7 +129,7 @@ class PrayerTimesWidgetService : Service() {
                 val remainingTimeString =
                     timing.convertMillisToHMS(remainingTimeInMillis, "HH:mm:ss")
                 return buildString {
-                    append(this@PrayerTimesWidgetService.getString(R.string.time_remaining_to_fajr_prayer))
+                    append(this@NotificationRemainingTimeService.getString(R.string.time_remaining_to_fajr_prayer))
                     append("\n")
                     append(remainingTimeString)
                 }

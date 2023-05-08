@@ -33,6 +33,15 @@ class MainActivity : AppCompatActivity() {
 
         run()
         startNewService(this)
+
+//        AlarmHandler(this).generateAlarmExactTime(
+//            this,
+//            System.currentTimeMillis(),
+//            "2",
+//            213904871,
+//            PrayerTimesReceiver::class.java,
+//        )
+
     }
 
     override fun onRestart() {
