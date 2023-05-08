@@ -18,13 +18,17 @@ import java.util.*
 
 
 fun startNewService(context: Context) {
-    val stoppedServiceIntent = Intent()
-    stoppedServiceIntent.component =
-        ComponentName(context, "com.android.muslimAssistant.services.PrayerTimesWidgetService")
-    context.stopService(stoppedServiceIntent)
+    try {
+        val stoppedServiceIntent = Intent()
+        stoppedServiceIntent.component =
+            ComponentName(context, "com.android.muslimAssistant.services.PrayerTimesWidgetService")
+        context.stopService(stoppedServiceIntent)
 
-    val startedServiceIntent = Intent(context, NotificationRemainingTimeService::class.java)
-    context.startService(startedServiceIntent)
+        val startedServiceIntent = Intent(context, NotificationRemainingTimeService::class.java)
+        context.startService(startedServiceIntent)
+    } catch (e: Exception) {
+        println("service init exception: " + e.message)
+    }
 }
 
 fun updateLanguage(context: Context): String {

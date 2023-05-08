@@ -39,8 +39,14 @@ class NotificationRemainingTimeService : Service() {
             prayerTimesRepository.retPrayerTimesSuspend()
         }
 
+        if (prayerTimes.isEmpty())
+            return
+
         val notificationBuilder =
-            NotificationCompat.Builder(this@NotificationRemainingTimeService, ChannelIDs.PRIORITY_MIN.ID)
+            NotificationCompat.Builder(
+                this@NotificationRemainingTimeService,
+                ChannelIDs.PRIORITY_MIN.ID
+            )
                 .setContentTitle(this@NotificationRemainingTimeService.getString(R.string.app_name))
                 .setSmallIcon(R.drawable.pray)
                 .setContentText(setRemainingTime(prayerTimes))
