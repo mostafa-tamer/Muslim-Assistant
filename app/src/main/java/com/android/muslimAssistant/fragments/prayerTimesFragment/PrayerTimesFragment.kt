@@ -25,6 +25,7 @@ import com.android.muslimAssistant.databinding.FragmentPrayerTimesBinding
 import com.android.muslimAssistant.notifications.AlarmHandler
 import com.android.muslimAssistant.repository.SharedPreferencesRepository
 import com.android.muslimAssistant.utils.AlertDialogWrapper
+import com.android.muslimAssistant.utils.startNewService
 import com.android.muslimAssistant.utils.toast
 import com.android.muslimAssistant.utils.toastErrorMessageObserver
 import com.android.muslimAssistant.widgets.PrayerTimesWidget
@@ -312,6 +313,7 @@ class PrayerTimesFragment : Fragment() {
         updatePrayerTimesInScreen()
         scheduleRemainingTimeTillNextPrayerTime()
         listeners()
+        startNewService(requireContext())
     }
 
     private fun run() {

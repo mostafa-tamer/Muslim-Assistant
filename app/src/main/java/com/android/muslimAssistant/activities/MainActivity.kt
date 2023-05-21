@@ -32,7 +32,6 @@ class MainActivity : AppCompatActivity() {
         overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
 
         run()
-        startNewService(this)
 
 //        AlarmHandler(this).generateAlarmExactTime(
 //            this,

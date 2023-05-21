@@ -19,14 +19,8 @@ class NotificationRemainingTimeService : Service() {
     private val timing by lazy { Timing() }
     override fun onBind(intent: Intent?) = null
 
-    override fun onCreate() {
-        super.onCreate()
-        updateNotification(0)
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        updateLanguage(this@NotificationRemainingTimeService)
-
+        updateLanguage(this)
         updateNotification(startId)
 
         return START_STICKY

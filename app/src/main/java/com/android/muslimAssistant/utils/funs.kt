@@ -19,10 +19,10 @@ import java.util.*
 
 fun startNewService(context: Context) {
     try {
-        val stoppedServiceIntent = Intent()
-        stoppedServiceIntent.component =
-            ComponentName(context, "com.android.muslimAssistant.services.PrayerTimesWidgetService")
-        context.stopService(stoppedServiceIntent)
+//        val stoppedServiceIntent = Intent()
+//        stoppedServiceIntent.component =
+//            ComponentName(context, "com.android.muslimAssistant.services.PrayerTimesWidgetService")
+        context.stopService(Intent(context, NotificationRemainingTimeService::class.java))
 
         val startedServiceIntent = Intent(context, NotificationRemainingTimeService::class.java)
         context.startService(startedServiceIntent)
